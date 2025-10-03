@@ -2,7 +2,7 @@
 #include <vector>
 
 #include "smart_logger.hpp"
-#include "triangle/triangle.hpp"
+// #include "triangle/triangle.hpp"
 
 int main() {
   // spdlog::info("Hello!");

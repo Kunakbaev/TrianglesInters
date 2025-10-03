@@ -7,6 +7,19 @@
 
 // template class, so it's easy to quickly change data type of coords without pain
 
+template<typename T> class point_t;
+template<typename T> using vector_t = point_t<T>;
+
+namespace vec_ops {
+  // dot product of 2 vectors
+  template<typename U>
+  [[nodiscard]] U dot(const point_t<U>& lhs, const point_t<U>& rhs);
+
+  // cross product of 2 vectors
+  template<typename U>
+  [[nodiscard]] point_t<U> cross(const point_t<U>& lhs, const point_t<U>& rhs);
+};
+
 template<typename T=double>
 class point_t {
  public:
@@ -27,13 +40,15 @@ class point_t {
 
   // dot product of 2 vectors
   template<typename U>
-  [[nodiscard]] friend U dot(const point_t<U>& lhs, const point_t<U>& rhs);
+  [[nodiscard]] friend U vec_ops::dot(const point_t<U>& lhs, const point_t<U>& rhs);
 
   // cross product of 2 vectors
   template<typename U>
-  [[nodiscard]] friend point_t<U> cross(const point_t<U>& lhs, const point_t<U>& rhs);
+  [[nodiscard]] friend point_t<U> vec_ops::cross(const point_t<U>& lhs, const point_t<U>& rhs);
 
   point_t operator*(T coeff) const;
+
+  [[nodiscard]] bool operator==(const vector_t<T>& other) const;
 
   template<typename U>
   friend std::istream& operator>>(std::istream& in_stream, point_t<U>& point);
@@ -89,13 +104,13 @@ template<typename U>
 
 template<typename U>
 [[nodiscard]] inline point_t<U> point_t<U>::operator+(const point_t<U>& other) const {
-  point_t<U> res(x_ + other.x_, y + other.y_, z_ + other.z_);
+  point_t<U> res(x_ + other.x_, y_ + other.y_, z_ + other.z_);
   return res;
 }
 
 template<typename U>
 [[nodiscard]] inline point_t<U> point_t<U>::operator-(const point_t<U>& other) const {
-  point_t<U> res(x_ - other.x_, y - other.y_, z_ - other.z_);
+  point_t<U> res(x_ - other.x_, y_ - other.y_, z_ - other.z_);
   return res;
 }
 
@@ -132,6 +147,13 @@ inline point_t<U> point_t<U>::operator*(U coeff) const {
 }
 
 template<typename U>
+[[nodiscard]] inline bool point_t<U>::operator==(const vector_t<U>& other) const {
+  return utils::sign(x_ - other.x_) == 0 &&
+         utils::sign(y_ - other.y_) == 0 &&
+         utils::sign(z_ - other.z_) == 0;
+}
+
+template<typename U>
 std::istream& operator>>(std::istream& in_stream, point_t<U>& point) {
   auto& [x, y, z] = point;
   in_stream >> x >> y >> z;
@@ -144,7 +166,3 @@ std::ostream& operator<<(std::ostream& out_stream, const point_t<U>& point) {
   out_stream << "(" << x << ", " << y << ", " << z << ")";
   return out_stream;
 }
-
-// alias for vector as it's basically the same thing
-template<class T>
-using vector_t = point_t<T>; // TODO:
