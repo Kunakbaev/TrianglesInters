@@ -18,6 +18,13 @@ namespace vec_ops {
   // cross product of 2 vectors
   template<typename U>
   [[nodiscard]] point_t<U> cross(const point_t<U>& lhs, const point_t<U>& rhs);
+
+  template<typename U>
+  [[nodiscard]] U mixed_prod(
+    const vector_t<U>& a,
+    const vector_t<U>& b,
+    const vector_t<U>& c
+  );
 };
 
 template<typename T=double>
@@ -45,6 +52,13 @@ class point_t {
   // cross product of 2 vectors
   template<typename U>
   [[nodiscard]] friend point_t<U> vec_ops::cross(const point_t<U>& lhs, const point_t<U>& rhs);
+
+  template<typename U>
+  [[nodiscard]] friend U vec_ops::mixed_prod(
+    const vector_t<U>& a,
+    const vector_t<U>& b,
+    const vector_t<U>& c
+  );
 
   point_t operator*(T coeff) const;
 
@@ -139,6 +153,16 @@ template<typename U>
 
   return res;
 }
+
+template<typename U>
+[[nodiscard]] U mixed_prod(
+  const vector_t<U>& a,
+  const vector_t<U>& b,
+  const vector_t<U>& c
+) {
+  return dot(a, cross(b, c));
+}
+
 };
 
 template<typename U>

@@ -2,10 +2,10 @@
 
 #include "point.hpp"
 
-template<typename T>
+template<typename T=double>
 class segment_t {
  public:
-  segment_t(const point_t<T>& a, const point<T>& b)
+  segment_t(const point_t<T>& a, const point_t<T>& b)
     : a_(a), b_(b) {}
 
   [[nodiscard]] bool is_empty() const;
@@ -18,6 +18,8 @@ class segment_t {
 
   [[nodiscard]] bool does_inter(const segment_t& other) const;
 
+  template<typename U>
+  friend std::ostream& operator<<(std::ostream& out_stream, const segment_t<U>& segm);
 
  private:
   static bool does_lie_in_range(T one, T two, T coord);
@@ -58,15 +60,27 @@ template<typename U>
 [[nodiscard]] inline bool segment_t<U>::does_contain_point(
   const point_t<U>& point
 ) const {
-  vector_t<U> cross_prod = cross(get_dir(), point - get_start());
-  if (cross_prod.is_zero()) {
+  if (is_empty()) {
+    return (a_ - point).is_zero();
+  }
+
+  vector_t<U> start2point = point - get_start();
+  vector_t<U> cross_prod = vec_ops::cross(get_dir(), start2point);
+  if (!cross_prod.is_zero()) {
     return false;
   }
 
+  U dot_prod = vec_ops::dot(get_dir(), start2point);
+  // std::cerr << "dot_prod : " << dot_prod << " segm_len : " << get_dir().get_len_sq() << std::endl;
+  if (utils::sign(dot_prod) < 0) return false;
+  if (utils::sign(dot_prod - get_dir().get_len_sq()) > 0) return false;
+
+  return true;
+
   // TODO: cringe
-  return does_lie_in_range(a_.x_, point.x_, b_.x_) &&
-         does_lie_in_range(a_.y_, point.y_, b_.y_) &&
-         does_lie_in_range(a_.z_, point.z_, b_.z_);
+  // return does_lie_in_range(a_.x_, point.x_, b_.x_) &&
+  //        does_lie_in_range(a_.y_, point.y_, b_.y_) &&
+  //        does_lie_in_range(a_.z_, point.z_, b_.z_);
 }
 
 template<typename U>
@@ -81,9 +95,9 @@ template<typename U>
 
 template<typename U>
 [[nodiscard]] bool segment_t<U>::does_inter(const segment_t<U>& other) const {
-  vector_t<U> cross_prod1 = cross(get_dir(),   other.get_dir());
-  vector_t<U> cross_prod2 = cross(cross_prod1, other.get_start() - get_start());
-  if (!cross_prod2.is_zero()) {
+  U mix = vec_ops::mixed_prod(get_dir(), other.get_dir(), other.get_start() - get_start());
+  // std::cout << "mix : " << mix << std::endl;
+  if (utils::sign(mix) != 0) {
     return false;
   }
 
@@ -96,5 +110,34 @@ template<typename U>
     return false;
   }
 
-  // TODO:
+  // a + t * (b - a) = c + s * (d - c);
+  vector_t<U> v1 = get_dir();
+  vector_t<U> v2 = other.get_dir();
+  // std::cerr << "my : " << *this << " other : " << other << std::endl;
+  // std::cerr << "v1 : " << v1 << " v2 : " << v2 << std::endl;
+  vector_t<U> norm = vec_ops::cross(v1, v2);
+  vector_t<U> starts_diff = get_start() - other.get_start();
+  vector_t<U> cross_prod_numerator =
+    vec_ops::cross(starts_diff, v2);
+  U numerator = vec_ops::dot(cross_prod_numerator, norm);
+  U denominator = norm.get_len_sq();
+  // std::cerr <<  "denominatro : " << denominator << std::endl;
+  if (utils::sign(denominator) == 0) {
+    // both segments lie on the same line
+    // we already checked that case with check_endpoints_inters method
+    return false;
+  }
+
+  U segm_time = -numerator / denominator;
+  // std::cerr << "segm_time : " << segm_time << std::endl;
+  point_t<U> inter = get_start() + get_dir() * segm_time;
+  // std::cerr << "inter : " << inter << std::endl;
+  return       does_contain_point(inter) &&
+         other.does_contain_point(inter);
+}
+
+template<typename U>
+std::ostream& operator<<(std::ostream& out_stream, const segment_t<U>& segm) {
+  out_stream << "{a: " << segm.a_ << ", b: " << segm.b_ << "}";
+  return out_stream;
 }
