@@ -22,6 +22,8 @@ to check such cases, because methods start looking littered
 template<typename T=double>
 class plane_t {
  public:
+  plane_t() = default; // is it really needed? I need in triangle realization
+
   plane_t(const point_t<T>& a, const point_t<T>& b, const point_t<T>& c)
       : base_(a), norm_(vec_ops::cross(b - a, c - a)) {
     if (!is_valid_plane()) {
