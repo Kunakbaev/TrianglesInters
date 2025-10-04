@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "smart_logger.hpp"
+#include "logLib.hpp"
 #include "bruteforce_solution/bruteforce_solution.hpp"
 
 int main() {

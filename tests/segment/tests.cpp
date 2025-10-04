@@ -1,4 +1,4 @@
-#include "smart_logger.hpp"
+#include "logLib.hpp"
 
 #include <gtest/gtest.h>
 #include "point.hpp"

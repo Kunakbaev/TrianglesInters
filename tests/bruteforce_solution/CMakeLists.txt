@@ -8,6 +8,6 @@ set_target_properties( bruteforce_solution_tests PROPERTIES RUNTIME_OUTPUT_DIREC
 target_link_libraries(bruteforce_solution_tests PRIVATE
   GTest::gtest
   GTest::gtest_main
-  spdlog::spdlog
+  my_loglib
   Threads::Threads
 )

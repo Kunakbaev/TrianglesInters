@@ -8,6 +8,6 @@ set_target_properties( segment_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${BUIL
 target_link_libraries(segment_tests PRIVATE
   GTest::gtest
   GTest::gtest_main
-  spdlog::spdlog
+  my_loglib
   Threads::Threads
 )

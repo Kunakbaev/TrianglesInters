@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/bash
 
 # ---------------------   PREPARING LOG LIB   -----------------------
 
@@ -12,20 +12,20 @@ if [ ! -d ".git" ]; then
   exit 1
 fi
 
-echo "Loading spdlog submodule..."
+echo "Loading logger lib submodule..."
 
 git submodule init
 git submodule update
 
 # Проверяем что нужный подмодуль загрузился
-if [ -d "3dPartyModules/spdlog" ]; then
-  echo "✓ spdlog submodule initialized successfully"
+if [ -d "3dPartyModules/LoggerLib" ]; then
+  echo "✓ LoggerLib submodule initialized successfully"
 else
-  echo "✗ spdlog submodule failed to initialize"
+  echo "✗ LoggerLib submodule failed to initialize"
   exit 1
 fi
 
-echo "spdlog submodule ready!"
+echo "LoggerLib submodule ready!"
 
 # ---------------------   PREPARING CMAKE   -----------------------
 
@@ -36,3 +36,4 @@ cd bin
 cmake ..
 cd ..
 cmake --build bin --target show_help_msg
+

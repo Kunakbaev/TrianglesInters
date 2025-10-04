@@ -8,6 +8,6 @@ set_target_properties( triangle_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${BUI
 target_link_libraries(triangle_tests PRIVATE
   GTest::gtest
   GTest::gtest_main
-  spdlog::spdlog
+  my_loglib
   Threads::Threads
 )
