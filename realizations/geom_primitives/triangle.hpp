@@ -142,8 +142,11 @@ inline bool triangle_t<U>::does_intersect(const triangle_t<U>& other_) const {
 
 template<typename U>
 std::istream& operator>>(std::istream& in_stream, triangle_t<U>& triangle) {
-  in_stream >> triangle.a_ >> triangle.b_ >> triangle.c_;
-  triangle.norm_ = triangle.get_norm_vec();
+  point_t<U> a;
+  point_t<U> b;
+  point_t<U> c;
+  in_stream >> a >> b >> c;
+  triangle = triangle_t<U>(a, b, c);
 
   return in_stream;
 }

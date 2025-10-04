@@ -118,6 +118,22 @@ TEST(TriangleTest, SegmentTriangleIntersection) {
   EXPECT_TRUE(tri1.does_intersect(segment_tri));
 }
 
+TEST(TriangleTest, CoplanarIntersectingTrianglesOXYplane_2) {
+  point_t a1{1.0, 1.0, 0.0};
+  point_t a2{-1.0, 1.0, 0.0};
+  point_t a3{0.0, -1.0, 0.0};
+  
+  point_t b1{0.0, 1.0, 0.0};
+  point_t b2{-1.0, -1.0, 0.0};
+  point_t b3{-1.0, -1.0, 0.0};
+  
+  triangle_t tri1{a1, a2, a3};
+  triangle_t tri2{b1, b2, b3};
+  
+  EXPECT_TRUE(tri1.does_intersect(tri2));
+  EXPECT_TRUE(tri2.does_intersect(tri1));
+}
+
 TEST(TriangleTest, SeparatePointTriangle) {
   point_t a1{5.0, 5.0, 5.0};
   point_t a2{5.0, 5.0, 5.0};

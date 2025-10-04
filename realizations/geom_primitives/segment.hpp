@@ -5,6 +5,8 @@
 template<typename T=double>
 class segment_t {
  public:
+  segment_t() = default;
+
   segment_t(const point_t<T>& a, const point_t<T>& b)
     : a_(a), b_(b) {}
 
