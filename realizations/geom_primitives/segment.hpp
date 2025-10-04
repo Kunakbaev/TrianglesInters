@@ -16,6 +16,8 @@ class segment_t {
 
   [[nodiscard]] point_t<T> get_start() const;
 
+  [[nodiscard]] point_t<T> get_finish() const;
+
   [[nodiscard]] bool does_inter(const segment_t& other) const;
 
   template<typename U>
@@ -54,6 +56,11 @@ template<typename U>
 template<typename U>
 [[nodiscard]] inline point_t<U> segment_t<U>::get_start() const {
   return a_;
+}
+
+template<typename U>
+[[nodiscard]] point_t<U> segment_t<U>::get_finish() const {
+  return b_;
 }
 
 template<typename U>
