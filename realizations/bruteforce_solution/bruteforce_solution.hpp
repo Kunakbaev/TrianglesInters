@@ -42,11 +42,9 @@ class bruteforce_solution_t {
 
   void input() {
     std::cin >> num_triangs_;
-    triangs_.reserve(num_triangs_);
-    for (std::size_t i = 0; i < num_triangs_; ++i) {
-      triangle_t<double> triangle;
+    triangs_.resize(num_triangs_);
+    for (auto& triangle : triangs_) {
       std::cin >> triangle;
-      //std::cin >> triangle;
     }
   }
 

@@ -35,5 +35,7 @@ mkdir -p bin # no error if it exists
 cd bin
 cmake ..
 cd ..
+cmake -S . -B bin -DCMAKE_BUILD_TYPE=Release
+cmake --build bin
 cmake --build bin --target show_help_msg
 
