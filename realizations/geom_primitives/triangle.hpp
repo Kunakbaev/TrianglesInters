@@ -6,6 +6,10 @@
 #include "plane.hpp"
 #include "point.hpp"
 
+// Forward declaration of AABB_t
+template<typename T>
+class AABB_t;
+
 template<typename T=double>
 class triangle_t {
  public:
@@ -48,6 +52,8 @@ class triangle_t {
     const point_t<T>& p, const point_t<T>& a, const point_t<T>& b) const;
 
  private:
+  friend class AABB_t<T>;
+
   point_t<T> a_;
   point_t<T> b_;
   point_t<T> c_;

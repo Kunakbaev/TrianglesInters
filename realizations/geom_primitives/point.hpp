@@ -44,6 +44,13 @@ class point_t {
 
   [[nodiscard]] point_t operator+(const point_t& other) const;
   [[nodiscard]] point_t operator-(const point_t& other) const;
+  
+  [[nodiscard]] point_t get_max_point(const point_t<T>& other) const;
+  [[nodiscard]] point_t get_min_point(const point_t<T>& other) const;
+
+  [[nodiscard]] T get_x() const;
+  [[nodiscard]] T get_y() const;
+  [[nodiscard]] T get_z() const;
 
   // dot product of 2 vectors
   template<typename U>
@@ -60,7 +67,8 @@ class point_t {
     const vector_t<U>& c
   );
 
-  point_t operator*(T coeff) const;
+  [[nodiscard]] point_t operator*(T coeff) const;
+
 
   [[nodiscard]] bool operator==(const vector_t<T>& other) const;
 
@@ -127,6 +135,31 @@ template<typename U>
   point_t<U> res(x_ - other.x_, y_ - other.y_, z_ - other.z_);
   return res;
 }
+
+template<typename U>
+[[nodiscard]] inline point_t<U> point_t<U>::get_max_point(const point_t<U>& other) const {
+  point_t<U> res = *this;
+  if (utils::sign(other.x_ - x_) > 0) res.x_ = other.x_;
+  if (utils::sign(other.y_ - y_) > 0) res.y_ = other.y_;
+  if (utils::sign(other.z_ - z_) > 0) res.z_ = other.z_;
+  return res;
+}
+
+template<typename U>
+[[nodiscard]] inline point_t<U> point_t<U>::get_min_point(const point_t<U>& other) const {
+  point_t<U> res = *this;
+  if (utils::sign(other.x_ - x_) < 0) res.x_ = other.x_;
+  if (utils::sign(other.y_ - y_) < 0) res.y_ = other.y_;
+  if (utils::sign(other.z_ - z_) < 0) res.z_ = other.z_;
+  return res;
+}
+
+template<typename U>
+[[nodiscard]] inline U point_t<U>::get_x() const { return x_; }
+template<typename U>
+[[nodiscard]] inline U point_t<U>::get_y() const { return y_; }
+template<typename U>
+[[nodiscard]] inline U point_t<U>::get_z() const { return z_; }
 
 namespace vec_ops {
 // dot product of 2 vectors

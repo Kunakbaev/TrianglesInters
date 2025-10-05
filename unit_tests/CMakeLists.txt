@@ -20,12 +20,13 @@ function(create_unit_test test_name source_file)
   add_test(NAME ${test_name} COMMAND ${test_name})
 endfunction()
 
-create_unit_test(utils               utils_tests.cpp)
-create_unit_test(point               point_tests.cpp)
-create_unit_test(segment             segment_tests.cpp)
-create_unit_test(plane               plane_tests.cpp)
-create_unit_test(triangle            triangle_tests.cpp)
-create_unit_test(bruteforce_solution bruteforce_solution_tests.cpp)
+create_unit_test(utils_unit_test               utils_tests.cpp)
+create_unit_test(point_unit_test               point_tests.cpp)
+create_unit_test(segment_unit_test             segment_tests.cpp)
+create_unit_test(plane_unit_test               plane_tests.cpp)
+create_unit_test(triangle_unit_test            triangle_tests.cpp)
+create_unit_test(bruteforce_solution_unit_test bruteforce_solution_tests.cpp)
+create_unit_test(AABB_unit_test                AABB_tests.cpp)
 
 add_custom_target(run_all_tests
   COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
