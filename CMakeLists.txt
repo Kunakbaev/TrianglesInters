@@ -61,4 +61,4 @@ add_custom_target(show_help_msg
 )
 
 add_subdirectory(usecase)
-add_subdirectory(tests)
+add_subdirectory(unit_tests)
