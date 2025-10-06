@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
+
 #include "BVH_solution/AABB.hpp"
+#include "triangle.hpp"
 
 TEST(AABBTest, IntersectionIdenticalBoxes) {
   point_t<double> p1(0.0, 0.0, 0.0);
@@ -459,4 +461,168 @@ TEST(AABBTest, MixedPreciseCoordinatesIntersectionTest) {
   // They should intersect since aabb1 max(3.333) > aabb2 min(3.000)
   EXPECT_TRUE(aabb1.does_inter(aabb2));
   EXPECT_TRUE(aabb2.does_inter(aabb1));
+}
+
+// ---------------  check "get_longest_axis_ind" and "unite_with" methods ---------
+
+TEST(AABBTest, UniteWithBasicCase) {
+  point_t<double> p1(1.000, 2.000, 3.000);
+  point_t<double> p2(3.000, 4.000, 5.000);
+  point_t<double> p3(2.000, 3.000, 4.000);
+  triangle_t<double> triangle1(p1, p2, p3);
+  AABB_t<double> aabb1(triangle1);
+  
+  point_t<double> p4(5.000, 6.000, 7.000);
+  point_t<double> p5(7.000, 8.000, 9.000);
+  point_t<double> p6(6.000, 7.000, 8.000);
+  triangle_t<double> triangle2(p4, p5, p6);
+  AABB_t<double> aabb2(triangle2);
+  
+  aabb1.unite_with(aabb2);
+  
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_x(), 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_y(), 2.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_z(), 3.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_x(), 7.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_y(), 8.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_z(), 9.000);
+}
+
+TEST(AABBTest, UniteWithOverlappingBoxes) {
+  point_t<double> p1(1.000, 1.000, 1.000);
+  point_t<double> p2(4.000, 4.000, 4.000);
+  triangle_t<double> triangle1(p1, p2, p1); // Degenerate
+  AABB_t<double> aabb1(triangle1);
+  
+  point_t<double> p3(3.000, 2.000, 0.500);
+  point_t<double> p4(5.000, 6.000, 5.000);
+  triangle_t<double> triangle2(p3, p4, p3); // Degenerate
+  AABB_t<double> aabb2(triangle2);
+  
+  aabb1.unite_with(aabb2);
+  
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_x(), 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_y(), 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_z(), 0.500);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_x(), 5.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_y(), 6.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_z(), 5.000);
+}
+
+TEST(AABBTest, UniteWithContainedBox) {
+  point_t<double> p1(1.000, 1.000, 1.000);
+  point_t<double> p2(6.000, 6.000, 6.000);
+  triangle_t<double> triangle1(p1, p2, p1);
+  AABB_t<double> aabb1(triangle1);
+  
+  point_t<double> p3(2.500, 3.000, 3.500);
+  point_t<double> p4(4.500, 4.000, 4.500);
+  triangle_t<double> triangle2(p3, p4, p3);
+  AABB_t<double> aabb2(triangle2);
+  
+  aabb1.unite_with(aabb2);
+  
+  // Should remain the same since aabb1 already contains aabb2
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_x(), 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_y(), 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_z(), 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_x(), 6.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_y(), 6.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_z(), 6.000);
+}
+
+TEST(AABBTest, UniteWithSinglePointBox) {
+  point_t<double> p1(2.000, 3.000, 4.000);
+  point_t<double> p2(5.000, 6.000, 7.000);
+  triangle_t<double> triangle1(p1, p2, p1);
+  AABB_t<double> aabb1(triangle1);
+  
+  // Single point box
+  point_t<double> p3(1.500, 8.000, 3.500);
+  triangle_t<double> triangle2(p3, p3, p3);
+  AABB_t<double> aabb2(triangle2);
+  
+  aabb1.unite_with(aabb2);
+  
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_x(), 1.500);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_y(), 3.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_z(), 3.500);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_x(), 5.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_y(), 8.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_z(), 7.000);
+}
+
+TEST(AABBTest, GetLongestAxisX) {
+  point_t<double> p1(1.000, 2.000, 3.000);
+  point_t<double> p2(9.000, 3.000, 4.000); // X range: 8.000
+  point_t<double> p3(5.000, 2.500, 3.500);
+  triangle_t<double> triangle(p1, p2, p3);
+  AABB_t<double> aabb(triangle);
+  
+  EXPECT_EQ(aabb.get_longest_axis_ind(), utils::axis_t::X);
+}
+
+TEST(AABBTest, GetLongestAxisY) {
+  point_t<double> p1(2.000, 1.000, 3.000);
+  point_t<double> p2(3.000, 9.000, 4.000); // Y range: 8.000
+  point_t<double> p3(2.500, 5.000, 3.500);
+  triangle_t<double> triangle(p1, p2, p3);
+  AABB_t<double> aabb(triangle);
+  
+  EXPECT_EQ(aabb.get_longest_axis_ind(), utils::axis_t::Y);
+}
+
+TEST(AABBTest, GetLongestAxisZ) {
+  point_t<double> p1(2.000, 3.000, 1.000);
+  point_t<double> p2(3.000, 4.000, 9.000); // Z range: 8.000
+  point_t<double> p3(2.500, 3.500, 5.000);
+  triangle_t<double> triangle(p1, p2, p3);
+  AABB_t<double> aabb(triangle);
+  
+  EXPECT_EQ(aabb.get_longest_axis_ind(), utils::axis_t::Z);
+}
+
+TEST(AABBTest, GetLongestAxisTieBreak) {
+  // All axes have same extent - implementation should handle tie-breaking consistently
+  point_t<double> p1(1.000, 1.000, 1.000);
+  point_t<double> p2(4.000, 4.000, 4.000); // All ranges: 3.000
+  triangle_t<double> triangle(p1, p2, p1);
+  AABB_t<double> aabb(triangle);
+  
+  utils::axis_t axis = aabb.get_longest_axis_ind();
+  // Should return one of the axes (implementation defined which one for ties)
+  EXPECT_TRUE(axis == utils::axis_t::X || 
+              axis == utils::axis_t::Y || 
+              axis == utils::axis_t::Z);
+}
+
+TEST(AABBTest, GetLongestAxisPreciseValues) {
+  point_t<double> p1(1.234, 2.345, 3.456);
+  point_t<double> p2(1.235, 5.678, 3.457); // Y range: ~3.333 (largest)
+  point_t<double> p3(1.234, 4.000, 3.456);
+  triangle_t<double> triangle(p1, p2, p3);
+  AABB_t<double> aabb(triangle);
+  
+  EXPECT_EQ(aabb.get_longest_axis_ind(), utils::axis_t::Y);
+}
+
+TEST(AABBTest, UniteAndLongestAxisCombined) {
+  point_t<double> p1(1.000, 1.000, 1.000);
+  point_t<double> p2(3.000, 3.000, 3.000);
+  triangle_t<double> triangle1(p1, p2, p1);
+  AABB_t<double> aabb1(triangle1);
+  
+  point_t<double> p3(2.000, 8.000, 2.000); // This will make Y axis longest
+  triangle_t<double> triangle2(p3, p3, p3);
+  AABB_t<double> aabb2(triangle2);
+  
+  // Before unite, aabb1 has all axes equal (range 2.000)
+  utils::axis_t before = aabb1.get_longest_axis_ind();
+  
+  aabb1.unite_with(aabb2);
+  
+  // After unite, Y axis should be longest (range 7.000)
+  EXPECT_EQ(aabb1.get_longest_axis_ind(), utils::axis_t::Y);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_y(), 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_y(), 8.000);
 }

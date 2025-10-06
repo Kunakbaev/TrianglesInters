@@ -11,6 +11,18 @@ template<typename T> class point_t;
 template<typename T> using vector_t = point_t<T>;
 
 namespace vec_ops {
+  template<typename U>
+  [[nodiscard]] point_t<U> get_max_of_2_points(
+    const point_t<U>& lhs,
+    const point_t<U>& rhs
+  );
+
+  template<typename U>
+  [[nodiscard]] point_t<U> get_min_of_2_points(
+    const point_t<U>& lhs,
+    const point_t<U>& rhs
+  );
+
   // dot product of 2 vectors
   template<typename U>
   [[nodiscard]] U dot(const point_t<U>& lhs, const point_t<U>& rhs);
@@ -44,13 +56,22 @@ class point_t {
 
   [[nodiscard]] point_t operator+(const point_t& other) const;
   [[nodiscard]] point_t operator-(const point_t& other) const;
-  
-  [[nodiscard]] point_t get_max_point(const point_t<T>& other) const;
-  [[nodiscard]] point_t get_min_point(const point_t<T>& other) const;
 
   [[nodiscard]] T get_x() const;
   [[nodiscard]] T get_y() const;
   [[nodiscard]] T get_z() const;
+  [[nodiscard]] T get_coord_by_axis_name(utils::axis_t axis) const;
+
+  template <typename U>
+  [[nodiscard]] friend point_t<U> vec_ops::get_max_of_2_points(
+    const point_t<U>& lhs,
+    const point_t<U>& rhs
+  );
+  template <typename U>
+  [[nodiscard]] friend point_t<U> vec_ops::get_min_of_2_points(
+    const point_t<U>& lhs,
+    const point_t<U>& rhs
+  );
 
   // dot product of 2 vectors
   template<typename U>
@@ -137,31 +158,51 @@ template<typename U>
 }
 
 template<typename U>
-[[nodiscard]] inline point_t<U> point_t<U>::get_max_point(const point_t<U>& other) const {
-  point_t<U> res = *this;
-  if (utils::sign(other.x_ - x_) > 0) res.x_ = other.x_;
-  if (utils::sign(other.y_ - y_) > 0) res.y_ = other.y_;
-  if (utils::sign(other.z_ - z_) > 0) res.z_ = other.z_;
-  return res;
-}
-
-template<typename U>
-[[nodiscard]] inline point_t<U> point_t<U>::get_min_point(const point_t<U>& other) const {
-  point_t<U> res = *this;
-  if (utils::sign(other.x_ - x_) < 0) res.x_ = other.x_;
-  if (utils::sign(other.y_ - y_) < 0) res.y_ = other.y_;
-  if (utils::sign(other.z_ - z_) < 0) res.z_ = other.z_;
-  return res;
-}
-
-template<typename U>
 [[nodiscard]] inline U point_t<U>::get_x() const { return x_; }
 template<typename U>
 [[nodiscard]] inline U point_t<U>::get_y() const { return y_; }
 template<typename U>
 [[nodiscard]] inline U point_t<U>::get_z() const { return z_; }
+template<typename U>
+[[nodiscard]] U point_t<U>::get_coord_by_axis_name(utils::axis_t axis) const {
+  switch (axis) {
+    case utils::axis_t::X: return x_;
+    case utils::axis_t::Y: return y_;
+    case utils::axis_t::Z: return z_;
+    default:
+      assert(false);
+      std::cerr << "Error: invalid axis name..." << std::endl;
+      return 0;
+  }
+}
+
 
 namespace vec_ops {
+
+template<typename U>
+[[nodiscard]] point_t<U> get_max_of_2_points(
+  const point_t<U>& lhs,
+  const point_t<U>& rhs
+) {
+  point_t<U> res = lhs;
+  if (utils::sign(rhs.x_ - lhs.x_) > 0) res.x_ = rhs.x_;
+  if (utils::sign(rhs.y_ - lhs.y_) > 0) res.y_ = rhs.y_;
+  if (utils::sign(rhs.z_ - lhs.z_) > 0) res.z_ = rhs.z_;
+  return res;
+}
+
+template<typename U>
+[[nodiscard]] point_t<U> get_min_of_2_points(
+  const point_t<U>& lhs,
+  const point_t<U>& rhs
+) {
+  point_t<U> res = lhs;
+  if (utils::sign(rhs.x_ - lhs.x_) < 0) res.x_ = rhs.x_;
+  if (utils::sign(rhs.y_ - lhs.y_) < 0) res.y_ = rhs.y_;
+  if (utils::sign(rhs.z_ - lhs.z_) < 0) res.z_ = rhs.z_;
+  return res;
+}
+
 // dot product of 2 vectors
 template<typename U>
 [[nodiscard]] U dot(const point_t<U>& lhs, const point_t<U>& rhs) {

@@ -5,33 +5,27 @@
 
 #include "plane.hpp"
 #include "point.hpp"
+#include "BVH_solution/AABB.hpp"
 
-// Forward declaration of AABB_t
 template<typename T>
-class AABB_t;
-
-template<typename T=double>
 class triangle_t {
  public:
-  triangle_t() = default; // ASK: maybe make it deleted method?
+  triangle_t() = default;
+  // Default constructor that properly initializes all members
+  // triangle_t() 
+  //   : a_(), b_(), c_(),
+  //     is_triang_segm_(false),
+  //     plane_(),  // Make sure plane_t has default constructor
+  //     deg_case_segm_(), bounding_box_() {  // Make sure segment_t has default constructor
+  // }
 
-  triangle_t(const point_t<T>& a, const point_t<T>& b, const point_t<T>& c)
-      : a_(a), b_(b), c_(c), deg_case_segm_(a, b), is_triang_segm_(false) {
-    // constructing plane_ from points may result in exception
-    // (std::invalid_argument) as they may form degenerate plane (i.e. segment or point)
-    try {
-      plane_ = plane_t<T>(a_, b_, c_);
-      is_triang_segm_ = false;
-    } catch(const std::invalid_argument&) {
-      is_triang_segm_ = true;
-      // ASK: cringe?
-           if (a == b) deg_case_segm_ = segment_t<T>(a, c);
-      else if (a == c) deg_case_segm_ = segment_t<T>(b, c);
-      // else             deg_case_segm_ = segment_t<T>(a, b);
-    }
-  }
+  triangle_t(const point_t<T>& a, const point_t<T>& b, const point_t<T>& c);
 
   [[nodiscard]] bool does_intersect(const triangle_t& other) const;
+
+  [[nodiscard]] AABB_t<T> get_AABB() const;
+
+  [[nodiscard]] std::vector<point_t<T>> get_points() const;
 
   template<typename U>
   friend std::istream& operator>>(std::istream& in_stream, triangle_t<U>& triangle);
@@ -52,8 +46,7 @@ class triangle_t {
     const point_t<T>& p, const point_t<T>& a, const point_t<T>& b) const;
 
  private:
-  friend class AABB_t<T>;
-
+  AABB_t<T>  bounding_box_;
   point_t<T> a_;
   point_t<T> b_;
   point_t<T> c_;
@@ -63,6 +56,24 @@ class triangle_t {
   plane_t<T>   plane_;
   segment_t<T> deg_case_segm_;
 };
+
+template<typename T>
+triangle_t<T>::triangle_t(const point_t<T>& a, const point_t<T>& b, const point_t<T>& c)
+    : a_(a), b_(b), c_(c), deg_case_segm_(a, b),
+    is_triang_segm_(false), bounding_box_(*this) {
+  // constructing plane_ from points may result in exception
+  // (std::invalid_argument) as they may form degenerate plane (i.e. segment or point)
+  try {
+    plane_ = plane_t<T>(a_, b_, c_);
+    is_triang_segm_ = false;
+  } catch(const std::invalid_argument&) {
+    is_triang_segm_ = true;
+    // ASK: cringe?
+         if (a == b) deg_case_segm_ = segment_t<T>(a, c);
+    else if (a == c) deg_case_segm_ = segment_t<T>(b, c);
+    // else             deg_case_segm_ = segment_t<T>(a, b);
+  }
+}
 
 template<typename U>
 [[nodiscard]] inline std::vector<segment_t<U>> triangle_t<U>::get_segments() const {
@@ -144,6 +155,16 @@ inline bool triangle_t<U>::does_intersect(const triangle_t<U>& other_) const {
   }
 
   return false;
+}
+
+template <typename U>
+[[nodiscard]] AABB_t<U> triangle_t<U>::get_AABB() const {
+  return bounding_box_;
+}
+
+template <typename U>
+[[nodiscard]] std::vector<point_t<U>> triangle_t<U>::get_points() const {
+  return {a_, b_, c_};
 }
 
 template<typename U>

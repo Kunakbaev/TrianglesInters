@@ -1,9 +1,13 @@
 #pragma once
 
+#include <iostream>
+
 namespace utils {
   inline const float       kEPS_f  = 1e-4;
   inline const double      kEPS_d  = 1e-6;
   inline const long double kEPS_ld = 1e-10;
+
+  enum class axis_t { X, Y, Z };
 
   [[nodiscard]] int sign(float x) {
     return x < -kEPS_f ? -1 : static_cast<int>(x > kEPS_f);

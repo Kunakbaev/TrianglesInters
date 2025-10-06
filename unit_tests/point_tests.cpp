@@ -119,3 +119,56 @@ TEST(Stream, Input) {
   EXPECT_EQ(point, expected);
 }
 
+// ----------- test methods get_max/min_of_2_points and get_coord_by_axis_name ---
+
+TEST(PointOperationsTest, GetMaxOf2PointsBasic) {
+  point_t<double> p1{1.0, 2.0, 3.0};
+  point_t<double> p2{4.0, 5.0, 6.0};
+  
+  auto result = vec_ops::get_max_of_2_points(p1, p2);
+  
+  EXPECT_DOUBLE_EQ(4.0, result.get_x());
+  EXPECT_DOUBLE_EQ(5.0, result.get_y());
+  EXPECT_DOUBLE_EQ(6.0, result.get_z());
+}
+
+TEST(PointOperationsTest, GetMinOf2PointsBasic) {
+  point_t<double> p1{1.123, 2.456, 3.789};
+  point_t<double> p2{4.321, 5.654, 6.987};
+  
+  auto result = vec_ops::get_min_of_2_points(p1, p2);
+  
+  EXPECT_DOUBLE_EQ(1.123, result.get_x());
+  EXPECT_DOUBLE_EQ(2.456, result.get_y());
+  EXPECT_DOUBLE_EQ(3.789, result.get_z());
+}
+
+TEST(PointOperationsTest, GetMaxOf2PointsMixedValues) {
+  point_t<double> p1{2.500, 1.100, 5.750};
+  point_t<double> p2{1.250, 3.300, 4.250};
+  
+  auto result = vec_ops::get_max_of_2_points(p1, p2);
+  
+  EXPECT_DOUBLE_EQ(2.500, result.get_x());  // p1.x is larger
+  EXPECT_DOUBLE_EQ(3.300, result.get_y());  // p2.y is larger
+  EXPECT_DOUBLE_EQ(5.750, result.get_z());  // p1.z is larger
+}
+
+TEST(PointOperationsTest, GetMinOf2PointsMixedValues) {
+  point_t<double> p1{2.500, 1.100, 5.750};
+  point_t<double> p2{1.250, 3.300, 4.250};
+  
+  auto result = vec_ops::get_min_of_2_points(p1, p2);
+  
+  EXPECT_DOUBLE_EQ(1.250, result.get_x());  // p2.x is smaller
+  EXPECT_DOUBLE_EQ(1.100, result.get_y());  // p1.y is smaller
+  EXPECT_DOUBLE_EQ(4.250, result.get_z());  // p2.z is smaller
+}
+
+TEST(PointOperationsTest, GetCoordByAxisName) {
+  point_t<double> p{1.234, 5.678, 9.012};
+  
+  EXPECT_DOUBLE_EQ(1.234, p.get_coord_by_axis_name(utils::axis_t::X));
+  EXPECT_DOUBLE_EQ(5.678, p.get_coord_by_axis_name(utils::axis_t::Y));
+  EXPECT_DOUBLE_EQ(9.012, p.get_coord_by_axis_name(utils::axis_t::Z));
+}
