@@ -89,6 +89,7 @@ inline std::pair<point_t<U>, bool> plane_t<U>::intersect_by_segm(
   U numerator = vec_ops::dot(norm_, base_ - segm.get_start());
   U denom     = vec_ops::dot(norm_, segm_dir);
   if (utils::sign(denom) == 0) {
+    // std::cerr << "denom = 0" << std::endl;
     // segment is parallel to triangle plane
     // so we check if both points are contained in the plane
     bool is_inter = is_point_on_plane(segm.get_start()) &&

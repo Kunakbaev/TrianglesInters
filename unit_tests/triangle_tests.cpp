@@ -163,3 +163,97 @@ TEST(TriangleTest, CoplanarNonIntersectingTriangles) {
   
   EXPECT_FALSE(tri1.does_intersect(tri2));
 }
+
+
+// ------------------ more complex tests, ones on which naive has failed: ------
+
+TEST(TriangleTest, CoplanarIntersectingTriangles) {
+  point_t a1{0.0, 0.0, 0.0};
+  point_t a2{2.0, 0.0, 0.0};
+  point_t a3{0.0, 2.0, 0.0};
+  
+  point_t b1{1.0, 1.0, 0.0};
+  point_t b2{3.0, 1.0, 0.0};
+  point_t b3{1.0, 3.0, 0.0};
+  
+  triangle_t<double> tri1{a1, a2, a3};
+  triangle_t<double> tri2{b1, b2, b3};
+  
+  EXPECT_TRUE(tri1.does_intersect(tri2));
+}
+
+TEST(TriangleTest, EdgeIntersection) {
+  point_t a1{0.0, 0.0, 0.0};
+  point_t a2{2.0, 0.0, 0.0};
+  point_t a3{0.0, 2.0, 0.0};
+  
+  point_t b1{1.0, 0.0, 0.0};
+  point_t b2{1.0, 2.0, 0.0};
+  point_t b3{3.0, 0.0, 0.0};
+  
+  triangle_t<double> tri1{a1, a2, a3};
+  triangle_t<double> tri2{b1, b2, b3};
+  
+  EXPECT_TRUE(tri1.does_intersect(tri2));
+}
+
+TEST(TriangleTest, VertexTouching) {
+  point_t a1{0.0, 0.0, 0.0};
+  point_t a2{1.0, 0.0, 0.0};
+  point_t a3{0.0, 1.0, 0.0};
+  
+  point_t b1{0.0, 0.0, 0.0};
+  point_t b2{-1.0, 0.0, 0.0};
+  point_t b3{0.0, -1.0, 0.0};
+  
+  triangle_t<double> tri1{a1, a2, a3};
+  triangle_t<double> tri2{b1, b2, b3};
+  
+  EXPECT_TRUE(tri1.does_intersect(tri2));
+}
+
+TEST(TriangleTest, TriangleInsideAnother) {
+  point_t outer1{0.0, 0.0, 0.0};
+  point_t outer2{3.0, 0.0, 0.0};
+  point_t outer3{0.0, 3.0, 0.0};
+  
+  point_t inner1{1.0, 1.0, 0.0};
+  point_t inner2{2.0, 1.0, 0.0};
+  point_t inner3{1.0, 2.0, 0.0};
+  
+  triangle_t<double> outer_tri{outer1, outer2, outer3};
+  triangle_t<double> inner_tri{inner1, inner2, inner3};
+  
+  EXPECT_TRUE(outer_tri.does_intersect(inner_tri));
+}
+
+TEST(TriangleTest, NonIntersectingSeparated) {
+  point_t a1{0.0, 0.0, 0.0};
+  point_t a2{1.0, 0.0, 0.0};
+  point_t a3{0.0, 1.0, 0.0};
+  
+  point_t b1{3.0, 3.0, 0.0};
+  point_t b2{4.0, 3.0, 0.0};
+  point_t b3{3.0, 4.0, 0.0};
+  
+  triangle_t<double> tri1{a1, a2, a3};
+  triangle_t<double> tri2{b1, b2, b3};
+  
+  EXPECT_FALSE(tri1.does_intersect(tri2));
+}
+
+TEST(TriangleTest, NonIntersectingDifferentZ) {
+  point_t a1{0.0, 0.0, 0.0};
+  point_t a2{1.0, 0.0, 0.0};
+  point_t a3{0.0, 1.0, 0.0};
+  
+  point_t b1{0.5, 0.5, 1.0};
+  point_t b2{1.5, 0.5, 1.0};
+  point_t b3{0.5, 1.5, 1.0};
+  
+  triangle_t<double> tri1{a1, a2, a3};
+  triangle_t<double> tri2{b1, b2, b3};
+  
+  EXPECT_FALSE(tri1.does_intersect(tri2));
+}
+

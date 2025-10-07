@@ -46,10 +46,10 @@ class triangle_t {
     const point_t<T>& p, const point_t<T>& a, const point_t<T>& b) const;
 
  private:
-  AABB_t<T>  bounding_box_;
   point_t<T> a_;
   point_t<T> b_;
   point_t<T> c_;
+  AABB_t<T>  bounding_box_;
   
   // ASK: it's convenient to use those, but takes more memory
   bool         is_triang_segm_;
@@ -59,10 +59,13 @@ class triangle_t {
 
 template<typename T>
 triangle_t<T>::triangle_t(const point_t<T>& a, const point_t<T>& b, const point_t<T>& c)
-    : a_(a), b_(b), c_(c), deg_case_segm_(a, b),
-    is_triang_segm_(false), bounding_box_(*this) {
+    : a_(a), b_(b), c_(c), bounding_box_(*this),
+      is_triang_segm_(false), deg_case_segm_(a, b) {
+
   // constructing plane_ from points may result in exception
   // (std::invalid_argument) as they may form degenerate plane (i.e. segment or point)
+  // std::cout << "triangle : " << *this << " min : " << bounding_box_.get_min_corner() <<
+  //      " " << bounding_box_.get_max_corner() << std::endl;
   try {
     plane_ = plane_t<T>(a_, b_, c_);
     is_triang_segm_ = false;
@@ -119,6 +122,7 @@ inline bool triangle_t<U>::is_intersected_by_segm(const segment_t<U>& segm) cons
   }
 
   auto [inter, is_inter] = plane_.intersect_by_segm(segm);
+  // std::cerr << "inter : " << inter << " is_inter : " << is_inter << std::endl;
   if (!is_inter) {
     return false;
   }
@@ -145,9 +149,11 @@ inline bool triangle_t<U>::does_intersect(const triangle_t<U>& other_) const {
   for (std::size_t _ = 0; _ < 2; ++_) {
     bool is_inter = false;
     for (const auto& segm : segms2) {
+      // std::cerr << "segm : " << segm << std::endl;
       if (one.is_intersected_by_segm(segm)) {
         return true;
       }
+      //exit(0);
     }
 
     std::swap(one,    two);

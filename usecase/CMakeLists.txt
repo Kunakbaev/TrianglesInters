@@ -1,5 +1,9 @@
-add_executable(usecase main.cpp)
 
-set_target_properties(usecase PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${BUILD_DIR_PATH}")
+function(add_usecase_target target_name source_file)
+  add_executable(       ${target_name} ${source_file})
+  set_target_properties(${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${BUILD_DIR_PATH}")
+  target_link_libraries(${target_name} PRIVATE my_loglib my_project_includes)
+endfunction()
 
-target_link_libraries(usecase PRIVATE my_loglib)
+add_usecase_target(naive                  naive.cpp)
+add_usecase_target(optimized_BVH_solution optimized_BVH_solution.cpp)
