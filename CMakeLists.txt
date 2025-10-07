@@ -7,10 +7,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(COMMON_LINK_FLAGS "-lm")
 
-include_directories(3dPartyModules/LoggerLib/include)
-include_directories(realizations/geom_primitives)
-include_directories(realizations/bruteforce_solution)
-include_directories(realizations)
+# --------------------------------------------
+
+add_library(my_project_includes INTERFACE)
+
+target_include_directories(my_project_includes INTERFACE
+  ${CMAKE_SOURCE_DIR}/3dPartyModules/LoggerLib/include
+  ${CMAKE_SOURCE_DIR}/realizations/geom_primitives
+  ${CMAKE_SOURCE_DIR}/realizations/bruteforce_solution
+  ${CMAKE_SOURCE_DIR}/realizations
+)
+
+# ---------------------------------------------
 
 set(COMMON_CXX_FLAGS "-lm -ggdb3 -std=c++17 -Werror -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations -Wc++14-compat -Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts -Wconditionally-supported -Wconversion -Wctor-dtor-privacy -Wempty-body -Wfloat-equal -Wformat-nonliteral -Wformat-security -Wformat-signedness -Wformat=2 -Winline -Wlogical-op -Wnon-virtual-dtor -Wopenmp-simd -Woverloaded-virtual -Wpacked -Wpointer-arith -Winit-self -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=2 -Wsuggest-attribute=noreturn -Wsuggest-final-methods -Wsuggest-final-types -Wsuggest-override -Wswitch-default -Wswitch-enum -Wsync-nand -Wundef -Wunreachable-code -Wunused -Wuseless-cast -Wvariadic-macros -Wno-literal-suffix -Wno-missing-field-initializers -Wno-narrowing -Wno-old-style-cast -Wno-varargs -Wstack-protector -fcheck-new -fsized-deallocation -fstack-protector -fstrict-overflow -flto-odr-type-merging -fno-omit-frame-pointer -pie -fPIE -Werror=vla")
 
@@ -46,14 +54,27 @@ add_subdirectory(3dPartyModules/LoggerLib)
 
 file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/help_message.txt CONTENT "
 Available targets:
-  * usecase - runs main target, it's an actual task solver: first expects number of triangles, than set of 3d triangles in stated quantity. Each triangle is described by 6 numbers (not necessary integers). As an output it produces list of triangles indices that intersect with at least one other triangle.
-  * utils_tests, point_tests, segment_tests, plane_tests, triangle_tests, bruteforce_solution_tests - these targets test methods of one particular class (e.g. segment_tests tests correctness of segment_t class)
+  * naive optimized_BVH_solution - two solutions of main task. How they work: first number of triangles is expected, than set of 3d triangles in stated quantity. Each triangle is described by 6 numbers (not necessary integers). As an output it produces list of triangles indices that intersect with at least one other triangle. \"naive\" - is a slow solution, works in O(n^2) (where \"n\" is number of triangles) by iterating through every pair of triangles. optimized_BVH_solution uses BVH_tree (BVH stands for bounding volume hierarchy), it's faster in some cases.
+  * These are targets which test methods of one particular class (e.g. target segment_unit_test tests correctness of segment_t class)
 usage examples:
+    * utils_unit_test
+    * point_tests
+    * segment_unit_test
+    * plane_unit_test
+    * triangle_unit_test
+    * bruteforce_solution_unit_test
+    * AABB_unit_test 
+    * optimized_BVH_solution_unit_test
   * to set build type:       cmake -S . -B bin -DCMAKE_BUILD_TYPE=Debug
-  * to build usecase target: cmake --build bin --target usecase
-  * and to run usecase: ./bin/usecase/usecase
-  * to run triangles_tests: ./bin/tests/triangle/triangle_tests
-  * to run all tests (uses CTest): make -C ./bin/tests/ run_all_tests
+  * example of building and running usecase targets:
+    1) naive solution
+    to build naive target: cmake --build bin --target naive
+    and to run it: ./bin/usecase/naive
+    2) optimized with BVH tree solution
+    to build: cmake --build bin --target optimized_BVH_solution
+    to run it: ./bin/usecase/optimized_BVH_solution
+  * to run triangles_tests: ./bin/unit_tests/triangle/triangle_unit_test
+  * to run all tests (uses CTest): make -C ./bin/unit_tests/ run_all_tests
 ")
 
 add_custom_target(show_help_msg
