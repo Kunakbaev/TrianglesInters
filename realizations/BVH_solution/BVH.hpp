@@ -99,7 +99,9 @@ template <typename T>
 
   if (is_leaf) {
     node_t* cur_node = new node_t(box, triangles);
-    // std::cout << "leaf" << std::endl;
+    // if (triangles.size() > 5) {
+    //   std::cout << "leaf size : " << triangles.size() << std::endl;
+    // }
     return cur_node;
   }
 
