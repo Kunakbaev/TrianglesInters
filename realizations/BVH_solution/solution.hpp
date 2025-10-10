@@ -26,5 +26,17 @@ class BVH_fast_solution_t : public general_solution_t<T> {
     }
 
     return result;
+
+    // auto bvh_root = build_BVH<double>(this->triangs_);
+    // std::vector<std::size_t> result;
+    // std::vector<bool> is_marked(this->triangs_.size());
+    // for (std::size_t cur_ind = 0; cur_ind < this->num_triangs_; ++cur_ind) {
+    //   if (is_triangle_not_alone<double>(
+    //     bvh_root.get(), this->triangs_, this->triangs_[cur_ind], cur_ind, is_marked)) {
+    //     result.emplace_back(cur_ind);
+    //   }
+    // }
+
+    // return result;
   }
 };

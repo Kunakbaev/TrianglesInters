@@ -25,6 +25,10 @@ class triangle_t {
 
   [[nodiscard]] AABB_t<T> get_AABB() const;
 
+  [[nodiscard]] point_t<T> get_center() const;
+
+  [[nodiscard]] point_t<T> get_centroid() const;
+
   [[nodiscard]] std::vector<point_t<T>> get_points() const;
 
   template<typename U>
@@ -50,6 +54,7 @@ class triangle_t {
   point_t<T> b_;
   point_t<T> c_;
   AABB_t<T>  bounding_box_;
+  point_t<T> center_;
   
   // ASK: it's convenient to use those, but takes more memory
   bool         is_triang_segm_;
@@ -60,6 +65,7 @@ class triangle_t {
 template<typename T>
 triangle_t<T>::triangle_t(const point_t<T>& a, const point_t<T>& b, const point_t<T>& c)
     : a_(a), b_(b), c_(c), bounding_box_(*this),
+      center_((bounding_box_.get_max_corner() + bounding_box_.get_min_corner()) * static_cast<T>(0.5)),
       is_triang_segm_(false), deg_case_segm_(a, b) {
 
   // constructing plane_ from points may result in exception
@@ -166,6 +172,16 @@ inline bool triangle_t<U>::does_intersect(const triangle_t<U>& other_) const {
 template <typename U>
 [[nodiscard]] AABB_t<U> triangle_t<U>::get_AABB() const {
   return bounding_box_;
+}
+
+template <typename U>
+[[nodiscard]] point_t<U> triangle_t<U>::get_center() const {
+  return center_;
+}
+
+template <typename U>
+[[nodiscard]] point_t<U> triangle_t<U>::get_centroid() const {
+  return (a_ + b_ + c_) * static_cast<U>(0.5);
 }
 
 template <typename U>

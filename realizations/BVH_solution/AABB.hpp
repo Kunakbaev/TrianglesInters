@@ -18,7 +18,14 @@ class AABB_t {
   void unite_with(const AABB_t& other);
 
   [[nodiscard]] utils::axis_t get_longest_axis_ind() const;
+
+  [[nodiscard]] T get_volume() const;
+
+  [[nodiscard]] AABB_t get_intersection(const AABB_t& other) const;
   
+ private:
+  [[nodiscard]] bool is_point_inside(const point_t<T>& point) const;
+
  private:
   point_t<T> corner_min_;
   point_t<T> corner_max_;
@@ -83,4 +90,42 @@ template<typename T>
   }
 
   return utils::axis_t::Z;
+}
+
+// TODO: rename to surface area
+template <typename T>
+[[nodiscard]] T AABB_t<T>::get_volume() const {
+  T len_x = corner_max_.get_x() - corner_min_.get_x();
+  T len_y = corner_max_.get_y() - corner_min_.get_y();
+  T len_z = corner_max_.get_z() - corner_min_.get_z();
+
+  T volume = 2 * (len_x * len_y + len_x * len_z + len_y * len_z);
+  // std::cerr << "volume : " << volume << " lenx : " <<
+  // len_x << " leny : " << len_y << " lenz : " << len_z << "\n";
+  return volume;
+}
+
+template <typename T>
+[[nodiscard]] bool AABB_t<T>::is_point_inside(const point_t<T>& point) const {
+  // TODO: BRUH:
+  triangle_t<T> degenerate_triang(point, point, point);
+  return does_inter(AABB_t<T>(degenerate_triang));
+}
+
+template <typename T>
+[[nodiscard]] AABB_t<T> AABB_t<T>::get_intersection(const AABB_t& other) const {
+  if (!does_inter(other)) {
+    std::cout << "no inter" << std::endl;
+    return {};
+  }
+
+  if (is_point_inside(other.get_min_corner())) {
+    return AABB_t(
+      {other.get_min_corner(), get_max_corner(), get_max_corner()}
+    );
+  } else {
+    return AABB_t(
+      {get_min_corner(), other.get_max_corner(), other.get_max_corner()}
+    );
+  }
 }

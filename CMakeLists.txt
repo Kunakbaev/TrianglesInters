@@ -24,7 +24,7 @@ set(COMMON_CXX_FLAGS "-lm -ggdb3 -std=c++17 -Werror -Wall -Wextra -Weffc++ -Wagg
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   # removes assert checks and log lib output
-  add_compile_options(-Ofast -DNDEBUG -DNO_LOG)
+  add_compile_options(-O3 -DNDEBUG -DNO_LOG)
   message(STATUS "Building in Release mode")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_compile_options(${COMMON_CXX_FLAGS})
