@@ -1,3 +1,11 @@
+import math
+from pathlib import Path
+import sys
+
+# Get the parent directory of the current script's parent
+parent_dir = Path(__file__).parent.parent
+sys.path.insert(0, str(parent_dir))
+
 import common
 
 """
@@ -10,7 +18,7 @@ as there's no big cluster of triangles and it has to iterate through every pair.
 """
 
 
-TEST_DATA_DIR   = common.SCRIPT_DIR + "/tests_data/in_one_plane_no_inters/"
+TEST_DATA_DIR   = common.SCRIPT_DIR + "/tests_data/in_one_plane/"
 NUM_TESTS       = 10
 EPS             = 1e-3
 MESH_SIDE       = 320
@@ -35,4 +43,14 @@ def generate_triangles():
   return triangles
 
 if __name__ == "__main__":
+  if len(sys.argv) != 3:
+    print("Error: this script expects 2 arguments: number of triangles and destination folder")
+    exit(1)
+
+  num_triangles = int(sys.argv[1])
+  res_folder_path = sys.argv[2]
+  TEST_DATA_DIR += res_folder_path + "/"
+
+  print(f"num_triangles : {num_triangles}, res_folder_path: {res_folder_path}\n")
+  MESH_SIDE = math.floor(math.sqrt(num_triangles)) + 1
   common.generate_tests(TEST_DATA_DIR, NUM_TESTS, generate_triangles)
