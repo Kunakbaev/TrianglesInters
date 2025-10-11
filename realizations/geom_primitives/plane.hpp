@@ -46,6 +46,8 @@ class plane_t {
 
   [[nodiscard]] bool is_point_on_plane(const point_t<T>& point) const;
 
+  [[nodiscard]] bool is_segment_on_plane(const segment_t<T>& segment) const;
+
   std::pair<point_t<T>, bool> intersect_by_segm(
     const segment_t<T>& segm
   ) const;
@@ -75,6 +77,12 @@ template<typename U>
 
   U dot_prod = vec_ops::dot(point - base_, norm_);
   return utils::sign(dot_prod) == 0;
+}
+
+template <typename U>
+[[nodiscard]] bool plane_t<U>::is_segment_on_plane(const segment_t<U>& segment) const {
+  return is_point_on_plane(segment.get_start()) ||
+         is_point_on_plane(segment.get_finish());
 }
 
 template<typename U>

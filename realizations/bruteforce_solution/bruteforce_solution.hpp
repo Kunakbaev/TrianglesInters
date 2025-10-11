@@ -17,6 +17,8 @@ class bruteforce_solution_t : public general_solution_t<T> {
     std::vector<std::size_t> result;
     std::vector<bool> is_marked(this->num_triangs_);
     for (std::size_t cur_ind = 0; cur_ind < this->num_triangs_; ++cur_ind) {
+      // assert(!this->triangs_[cur_ind].is_valid());
+      // std::cerr << "cur_ind : " << cur_ind << " triang : " << this->triangs_[cur_ind] << "\n";
       if (is_marked[cur_ind]) {
         result.emplace_back(cur_ind);
         continue;
@@ -37,6 +39,35 @@ class bruteforce_solution_t : public general_solution_t<T> {
         }
       }
     }
+
+    // std::vector<std::size_t> corr;
+    // for (std::size_t i = 0; i < this->triangs_.size(); ++i) {
+    //   for (std::size_t k = 0; k < this->triangs_.size(); ++k) {
+    //     if (i == k) continue;
+    //     triangle_t<T> one = this->triangs_[i];
+    //     triangle_t<T> two = this->triangs_[k];
+    //     bool is_eq = true;
+    //     std::vector<point_t<T>> aa = one.get_points();
+    //     std::vector<point_t<T>> bb = two.get_points();
+    //     for (std::size_t j = 0; j < 3; ++j) {
+    //       //std::cerr << "a : " << aa[j] << " " << bb[j] << std::endl;
+    //       if (!(aa[j] - bb[j]).is_zero()) {
+    //         // std::cout << "I : " << i << std::endl;
+    //         is_eq = false;
+    //         break;
+    //       }
+    //     }
+
+    //     if (is_eq) {
+    //       corr.emplace_back(i);
+    //     }
+    //   }
+    // }
+
+    // if (corr != result) {
+    //   std::cout << "Bruh" << std::endl; 
+    //   assert(false);
+    // }
 
     return result;
   }

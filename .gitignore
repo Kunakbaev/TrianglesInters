@@ -6,3 +6,5 @@ bruh
 tests_data
 perf.data
 .dat
+test.dat
+tests/display/test.dat

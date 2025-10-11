@@ -272,3 +272,113 @@ TEST(SegmentTest, TwoPointSegments) {
   EXPECT_TRUE(point_seg1.does_inter(point_seg3)); // same point
   EXPECT_FALSE(point_seg1.does_inter(point_seg2)); // different points
 }
+
+TEST(SegmentTest, MyByHandsEqual) {
+  point_t<double> point1{0, 0, 0};
+  point_t<double> point2{1, 0, 0};
+  
+  segment_t point_seg1{point1, point2};
+  segment_t point_seg2{point1, point2};
+  
+  EXPECT_TRUE(point_seg1.does_inter(point_seg2));
+  EXPECT_TRUE(point_seg2.does_inter(point_seg1));
+}
+
+TEST(SegmentTest, MyByHandsContains) {
+  point_t<double> point1{0, 0, 0};
+  point_t<double> point2{2, 0, 0};
+  point_t<double> point3{-1, 0, 0};
+  point_t<double> point4{3, 0, 0};
+  
+  segment_t point_seg1{point1, point2};
+  segment_t point_seg2{point3, point4};
+  
+  EXPECT_TRUE(point_seg1.does_inter(point_seg2));
+  EXPECT_TRUE(point_seg2.does_inter(point_seg1));
+}
+
+TEST(SegmentTest, MyByHandsInternOnSameLine) {
+  point_t<double> point1{0, 0, 0};
+  point_t<double> point2{2, 0, 0};
+  point_t<double> point3{1, 0, 0};
+  point_t<double> point4{3, 0, 0};
+  
+  segment_t<double> point_seg1{point1, point2};
+  segment_t<double> point_seg2{point3, point4};
+  
+  EXPECT_TRUE(point_seg1.does_inter(point_seg2));
+  EXPECT_TRUE(point_seg2.does_inter(point_seg1));
+}
+
+TEST(SegmentTest, MyByHandsTshapePlacement) {
+  point_t<double> point1{0, 0, 0};
+  point_t<double> point2{1, 0, 0};
+  point_t<double> point3{2, 1, 0};
+  point_t<double> point4{2, -1, 0};
+  
+  segment_t<double> point_seg1{point1, point2};
+  segment_t<double> point_seg2{point3, point4};
+  
+  EXPECT_FALSE(point_seg1.does_inter(point_seg2));
+  EXPECT_FALSE(point_seg2.does_inter(point_seg1));
+}
+
+TEST(SegmentTest, MyByHandsTshapePlacementInter) {
+  point_t<double> point1{0, 0, 0};
+  point_t<double> point2{1, 0, 0};
+  point_t<double> point3{0.5, 1, 0};
+  point_t<double> point4{0.5, -1, 0};
+  
+  segment_t<double> point_seg1{point1, point2};
+  segment_t<double> point_seg2{point3, point4};
+  
+  EXPECT_TRUE(point_seg1.does_inter(point_seg2));
+  EXPECT_TRUE(point_seg2.does_inter(point_seg1));
+}
+
+TEST(SegmentTest, MyByHandsTshapePlacementOrt) {
+  point_t<double> point1{0, 0, 0};
+  point_t<double> point2{1, 0, 0};
+  point_t<double> point3{0.5, 1, 0};
+  point_t<double> point4{0.5, 0, 0};
+  
+  segment_t<double> point_seg1{point1, point2};
+  segment_t<double> point_seg2{point3, point4};
+  
+  EXPECT_TRUE(point_seg1.does_inter(point_seg2));
+  EXPECT_TRUE(point_seg2.does_inter(point_seg1));
+}
+
+TEST(SegmentTest, MyByHandsPointOnLineDouble) {
+  auto get_point_on_line = [](double x){
+    return point_t<double>{x, acos(-1.0) * x + M_E, 0};
+  };
+
+  point_t<double> point1 = get_point_on_line(0);
+  point_t<double> point2 = get_point_on_line(2);
+  point_t<double> point3 = get_point_on_line(1);
+  point_t<double> point4 = get_point_on_line(3);
+  
+  segment_t<double> point_seg1{point1, point2};
+  segment_t<double> point_seg2{point3, point4};
+  
+  EXPECT_TRUE(point_seg1.does_inter(point_seg2));
+  EXPECT_TRUE(point_seg2.does_inter(point_seg1));
+}
+
+TEST(SegmentTest, MyByHandsPointOnLineDouble2) {
+  auto get_point_on_line = [](double x){
+    return point_t<double>{x, acos(-1.0) * x + M_E, 0};
+  };
+
+  point_t<double> point1 = get_point_on_line(0.001);
+  point_t<double> point2 = get_point_on_line(0.001);
+  point_t<double> point3 = get_point_on_line(0);
+  point_t<double> point4 = get_point_on_line(0);
+  
+  segment_t<double> point_seg1{point1, point2};
+  segment_t<double> point_seg2{point3, point4};
+  
+  EXPECT_FALSE(point_seg1.does_inter(point_seg2));
+  EXPECT_FALSE(point_seg2.does_inter(point_seg1));
+}

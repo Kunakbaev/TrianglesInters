@@ -31,23 +31,27 @@ class triangle_t {
 
   [[nodiscard]] std::vector<point_t<T>> get_points() const;
 
+  // [[nodiscard]] bool operator==(const triangle_t& other) const;
+
   template<typename U>
   friend std::istream& operator>>(std::istream& in_stream, triangle_t<U>& triangle);
 
   template<typename U>
   friend std::ostream& operator<<(std::ostream& out_stream, const triangle_t<U>& triangle);
 
- private:
   [[nodiscard]] bool is_point_inside_triang(const point_t<T>& point) const;
 
   [[nodiscard]] bool is_intersected_by_segm(const segment_t<T>& segm) const;
 
+ private:
   [[nodiscard]] std::vector<segment_t<T>> get_segments() const;
 
   // return 1, if B is A, rotated counterclockwise
   // return -1 if rotation is clockwise, 0 if they are collinear
   [[nodiscard]] int rotation_sign(
     const point_t<T>& p, const point_t<T>& a, const point_t<T>& b) const;
+
+  [[nodiscard]] bool does_intersect_helper(const triangle_t& other) const;
 
  private:
   point_t<T> a_;
@@ -116,8 +120,8 @@ inline bool triangle_t<U>::is_point_inside_triang(const point_t<U>& point) const
   int sign2 = rotation_sign(point, b_, c_);
   int sign3 = rotation_sign(point, c_, a_);
 
-  bool all_non_neg = sign1 <= 0 && sign2 < 0 && sign3 < 0;
-  bool all_non_pos = sign1 > 0 && sign2 > 0 && sign3 > 0;
+  bool all_non_neg = sign1 <= 0 && sign2 <= 0 && sign3 <= 0;
+  bool all_non_pos = sign1 >= 0 && sign2 >= 0 && sign3 >= 0;
   return all_non_neg || all_non_pos;
 }
 
@@ -127,46 +131,43 @@ inline bool triangle_t<U>::is_intersected_by_segm(const segment_t<U>& segm) cons
     return deg_case_segm_.does_inter(segm);
   }
 
+  if (plane_.is_segment_on_plane(segm)) {
+    std::vector<segment_t<U>> triang_segms = get_segments();
+    for (const auto& triang_segm : triang_segms) {
+      if (triang_segm.does_inter(segm)) {
+        return true;
+      }
+    }
+
+    return is_point_inside_triang(segm.get_start()) ||
+           is_point_inside_triang(segm.get_finish());
+  }
+
   auto [inter, is_inter] = plane_.intersect_by_segm(segm);
   // std::cerr << "inter : " << inter << " is_inter : " << is_inter << std::endl;
   if (!is_inter) {
     return false;
   }
 
-  std::vector<segment_t<U>> triang_segms = get_segments();
-  for (const auto& triang_segm : triang_segms) {
-    if (triang_segm.does_inter(segm)) {
-      return true;
-    }
-  }
-
   return is_point_inside_triang(inter);
 }
 
 template<typename U>
-inline bool triangle_t<U>::does_intersect(const triangle_t<U>& other_) const {
-  // ASK: cringe?
-  triangle_t<U> one = *this;
-  triangle_t<U> two = other_;
-
-  std::vector<segment_t<U>> segms1 = get_segments();
-  std::vector<segment_t<U>> segms2 = other_.get_segments();
-
-  for (std::size_t _ = 0; _ < 2; ++_) {
-    bool is_inter = false;
-    for (const auto& segm : segms2) {
-      // std::cerr << "segm : " << segm << std::endl;
-      if (one.is_intersected_by_segm(segm)) {
-        return true;
-      }
-      //exit(0);
+inline bool triangle_t<U>::does_intersect_helper(const triangle_t<U>& other) const {
+  std::vector<segment_t<U>> segms = other.get_segments();
+  for (const auto& segm : segms) {
+    if (is_intersected_by_segm(segm)) {
+      return true;
     }
-
-    std::swap(one,    two);
-    std::swap(segms1, segms2);
   }
 
   return false;
+}
+
+template<typename U>
+inline bool triangle_t<U>::does_intersect(const triangle_t<U>& other) const {
+  return does_intersect_helper(other) ||
+   other.does_intersect_helper(*this);
 }
 
 template <typename U>

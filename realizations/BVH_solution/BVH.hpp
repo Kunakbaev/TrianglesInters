@@ -118,9 +118,10 @@ template <typename T>
     // std::cerr << "inter_volume : " << inter_volume << " bound : "
     //   << static_cast<U>(0.3) * box.get_volume() << std::endl;
     if ((lhs.empty() || rhs.empty()) ||
-      (depth >= 10 && inter_volume > static_cast<T>(0.4) * box.get_volume()) ||
-      (depth >= 13 && inter_volume > static_cast<T>(0.2) * box.get_volume()) ||
-       depth >= 16) {
+      (depth >= 8  && inter_volume > static_cast<T>(0.3) * box.get_volume()) ||
+      (depth >= 12 && inter_volume > static_cast<T>(0.1) * box.get_volume()) ||
+       depth >= 14) {
+      // std::cout << "leaf size: " << indices.size() << "\n";
       is_leaf = true;
     }
 

@@ -9,6 +9,7 @@ class AABB_t {
  public:
   AABB_t() = default;
   AABB_t(const triangle_t<T>& triangle);
+  AABB_t(const point_t<T>& corner_min, const point_t<T>& corner_max);
 
   [[nodiscard]] bool does_inter(const AABB_t& other) const;
 
@@ -46,6 +47,10 @@ AABB_t<T>::AABB_t(const triangle_t<T>& triangle) {
   }
   //exit(2);
 }
+
+template <typename T>
+AABB_t<T>::AABB_t(const point_t<T>& corner_min, const point_t<T>& corner_max)
+  : corner_min_(corner_min), corner_max_(corner_max) {}
 
 template<typename T>
 [[nodiscard]] inline bool AABB_t<T>::does_inter(const AABB_t<T>& other) const {
@@ -108,24 +113,19 @@ template <typename T>
 template <typename T>
 [[nodiscard]] bool AABB_t<T>::is_point_inside(const point_t<T>& point) const {
   // TODO: BRUH:
-  triangle_t<T> degenerate_triang(point, point, point);
-  return does_inter(AABB_t<T>(degenerate_triang));
+  return does_inter({point, point});
 }
 
 template <typename T>
 [[nodiscard]] AABB_t<T> AABB_t<T>::get_intersection(const AABB_t& other) const {
   if (!does_inter(other)) {
-    std::cout << "no inter" << std::endl;
+    // std::cout << "no inter" << std::endl;
     return {};
   }
 
   if (is_point_inside(other.get_min_corner())) {
-    return AABB_t(
-      {other.get_min_corner(), get_max_corner(), get_max_corner()}
-    );
+    return {other.get_min_corner(), get_max_corner()};
   } else {
-    return AABB_t(
-      {get_min_corner(), other.get_max_corner(), other.get_max_corner()}
-    );
+    return {get_min_corner(), other.get_max_corner()};
   }
 }
