@@ -8,8 +8,7 @@
 TEST(BVHFastSolutionTest, EmptyInput) {
   std::vector<triangle_t<double>> triangles;
   BVH_fast_solution_t<double> solver{triangles};
-  
-  std::cerr << std::endl;
+
   auto result = solver.get_inter_triangs_indices();
   EXPECT_TRUE(result.empty());
 }
@@ -150,8 +149,6 @@ TEST(BVHFastSolutionTest, CoplanarIntersectingTriangles) {
   BVH_fast_solution_t<double> solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
-  
-  std::cerr << "HELLO" << std::endl;
 
   EXPECT_EQ(result.size(), 2);
   EXPECT_NE(std::find(result.begin(), result.end(), 0), result.end());

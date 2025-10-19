@@ -54,14 +54,14 @@ AABB_t<T>::AABB_t(const point_t<T>& corner_min, const point_t<T>& corner_max)
 
 template<typename T>
 [[nodiscard]] inline bool AABB_t<T>::does_inter(const AABB_t<T>& other) const {
-  if (utils::sign(corner_min_.get_x() - other.corner_max_.get_x()) > 0 ||
-      utils::sign(corner_max_.get_x() - other.corner_min_.get_x()) < 0)
+  if (utils::sign(corner_min_.x - other.corner_max_.x) > 0 ||
+      utils::sign(corner_max_.x - other.corner_min_.x) < 0)
         return false;
-  if (utils::sign(corner_min_.get_y() - other.corner_max_.get_y()) > 0 ||
-      utils::sign(corner_max_.get_y() - other.corner_min_.get_y()) < 0)
+  if (utils::sign(corner_min_.y - other.corner_max_.y) > 0 ||
+      utils::sign(corner_max_.y - other.corner_min_.y) < 0)
         return false;
-  if (utils::sign(corner_min_.get_z() - other.corner_max_.get_z()) > 0 ||
-      utils::sign(corner_max_.get_z() - other.corner_min_.get_z()) < 0)
+  if (utils::sign(corner_min_.z - other.corner_max_.z) > 0 ||
+      utils::sign(corner_max_.z - other.corner_min_.z) < 0)
         return false;
 
   return true;
@@ -81,9 +81,9 @@ void AABB_t<T>::unite_with(const AABB_t& other) {
 
 template<typename T>
 [[nodiscard]] utils::axis_t AABB_t<T>::get_longest_axis_ind() const {
-  T len_x = corner_max_.get_x() - corner_min_.get_x();
-  T len_y = corner_max_.get_y() - corner_min_.get_y();
-  T len_z = corner_max_.get_z() - corner_min_.get_z();
+  T len_x = corner_max_.x - corner_min_.x;
+  T len_y = corner_max_.y - corner_min_.y;
+  T len_z = corner_max_.z - corner_min_.z;
 
   if (utils::sign(len_x - len_y) >= 0 && utils::sign(len_x - len_z) >= 0) {
     return utils::axis_t::X;
@@ -100,9 +100,9 @@ template<typename T>
 // TODO: rename to surface area
 template <typename T>
 [[nodiscard]] T AABB_t<T>::get_volume() const {
-  T len_x = corner_max_.get_x() - corner_min_.get_x();
-  T len_y = corner_max_.get_y() - corner_min_.get_y();
-  T len_z = corner_max_.get_z() - corner_min_.get_z();
+  T len_x = corner_max_.x - corner_min_.x;
+  T len_y = corner_max_.y - corner_min_.y;
+  T len_z = corner_max_.z - corner_min_.z;
 
   T volume = 2 * (len_x * len_y + len_x * len_z + len_y * len_z);
   // std::cerr << "volume : " << volume << " lenx : " <<
@@ -119,7 +119,6 @@ template <typename T>
 template <typename T>
 [[nodiscard]] AABB_t<T> AABB_t<T>::get_intersection(const AABB_t& other) const {
   if (!does_inter(other)) {
-    // std::cout << "no inter" << std::endl;
     return {};
   }
 

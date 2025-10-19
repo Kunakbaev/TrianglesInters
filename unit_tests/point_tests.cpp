@@ -127,9 +127,9 @@ TEST(PointOperationsTest, GetMaxOf2PointsBasic) {
   
   auto result = vec_ops::get_max_of_2_points(p1, p2);
   
-  EXPECT_DOUBLE_EQ(4.0, result.get_x());
-  EXPECT_DOUBLE_EQ(5.0, result.get_y());
-  EXPECT_DOUBLE_EQ(6.0, result.get_z());
+  EXPECT_DOUBLE_EQ(4.0, result.x);
+  EXPECT_DOUBLE_EQ(5.0, result.y);
+  EXPECT_DOUBLE_EQ(6.0, result.z);
 }
 
 TEST(PointOperationsTest, GetMinOf2PointsBasic) {
@@ -138,9 +138,9 @@ TEST(PointOperationsTest, GetMinOf2PointsBasic) {
   
   auto result = vec_ops::get_min_of_2_points(p1, p2);
   
-  EXPECT_DOUBLE_EQ(1.123, result.get_x());
-  EXPECT_DOUBLE_EQ(2.456, result.get_y());
-  EXPECT_DOUBLE_EQ(3.789, result.get_z());
+  EXPECT_DOUBLE_EQ(1.123, result.x);
+  EXPECT_DOUBLE_EQ(2.456, result.y);
+  EXPECT_DOUBLE_EQ(3.789, result.z);
 }
 
 TEST(PointOperationsTest, GetMaxOf2PointsMixedValues) {
@@ -149,9 +149,9 @@ TEST(PointOperationsTest, GetMaxOf2PointsMixedValues) {
   
   auto result = vec_ops::get_max_of_2_points(p1, p2);
   
-  EXPECT_DOUBLE_EQ(2.500, result.get_x());  // p1.x is larger
-  EXPECT_DOUBLE_EQ(3.300, result.get_y());  // p2.y is larger
-  EXPECT_DOUBLE_EQ(5.750, result.get_z());  // p1.z is larger
+  EXPECT_DOUBLE_EQ(2.500, result.x);  // p1.x is larger
+  EXPECT_DOUBLE_EQ(3.300, result.y);  // p2.y is larger
+  EXPECT_DOUBLE_EQ(5.750, result.z);  // p1.z is larger
 }
 
 TEST(PointOperationsTest, GetMinOf2PointsMixedValues) {
@@ -160,9 +160,9 @@ TEST(PointOperationsTest, GetMinOf2PointsMixedValues) {
   
   auto result = vec_ops::get_min_of_2_points(p1, p2);
   
-  EXPECT_DOUBLE_EQ(1.250, result.get_x());  // p2.x is smaller
-  EXPECT_DOUBLE_EQ(1.100, result.get_y());  // p1.y is smaller
-  EXPECT_DOUBLE_EQ(4.250, result.get_z());  // p2.z is smaller
+  EXPECT_DOUBLE_EQ(1.250, result.x);  // p2.x is smaller
+  EXPECT_DOUBLE_EQ(1.100, result.y);  // p1.y is smaller
+  EXPECT_DOUBLE_EQ(4.250, result.z);  // p2.z is smaller
 }
 
 TEST(PointOperationsTest, GetCoordByAxisName) {

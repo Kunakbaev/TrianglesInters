@@ -162,13 +162,13 @@ TEST(AABBTest, ConstructorFromTriangleGetCorner) {
   point_t<double> min_corner = aabb.get_min_corner();
   point_t<double> max_corner = aabb.get_max_corner();
   
-  EXPECT_DOUBLE_EQ(min_corner.get_x(), -1.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_y(), 0.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_z(), 0.0);
+  EXPECT_DOUBLE_EQ(min_corner.x, -1.0);
+  EXPECT_DOUBLE_EQ(min_corner.y, 0.0);
+  EXPECT_DOUBLE_EQ(min_corner.z, 0.0);
   
-  EXPECT_DOUBLE_EQ(max_corner.get_x(), 1.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_y(), 2.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_z(), 3.0);
+  EXPECT_DOUBLE_EQ(max_corner.x, 1.0);
+  EXPECT_DOUBLE_EQ(max_corner.y, 2.0);
+  EXPECT_DOUBLE_EQ(max_corner.z, 3.0);
 }
 
 TEST(AABBTest, GetMinMaxCornersSimpleTriangleGetCorner) {
@@ -182,13 +182,13 @@ TEST(AABBTest, GetMinMaxCornersSimpleTriangleGetCorner) {
   point_t<double> min_corner = aabb.get_min_corner();
   point_t<double> max_corner = aabb.get_max_corner();
   
-  EXPECT_DOUBLE_EQ(min_corner.get_x(), 1.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_y(), 0.5);
-  EXPECT_DOUBLE_EQ(min_corner.get_z(), 1.0);
+  EXPECT_DOUBLE_EQ(min_corner.x, 1.0);
+  EXPECT_DOUBLE_EQ(min_corner.y, 0.5);
+  EXPECT_DOUBLE_EQ(min_corner.z, 1.0);
   
-  EXPECT_DOUBLE_EQ(max_corner.get_x(), 3.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_y(), 3.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_z(), 3.0);
+  EXPECT_DOUBLE_EQ(max_corner.x, 3.0);
+  EXPECT_DOUBLE_EQ(max_corner.y, 3.0);
+  EXPECT_DOUBLE_EQ(max_corner.z, 3.0);
 }
 
 TEST(AABBTest, GetMinMaxCornersAllPositiveGetCorner) {
@@ -202,13 +202,13 @@ TEST(AABBTest, GetMinMaxCornersAllPositiveGetCorner) {
   point_t<double> min_corner = aabb.get_min_corner();
   point_t<double> max_corner = aabb.get_max_corner();
   
-  EXPECT_DOUBLE_EQ(min_corner.get_x(), 1.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_y(), 2.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_z(), 3.0);
+  EXPECT_DOUBLE_EQ(min_corner.x, 1.0);
+  EXPECT_DOUBLE_EQ(min_corner.y, 2.0);
+  EXPECT_DOUBLE_EQ(min_corner.z, 3.0);
   
-  EXPECT_DOUBLE_EQ(max_corner.get_x(), 4.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_y(), 5.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_z(), 7.0);
+  EXPECT_DOUBLE_EQ(max_corner.x, 4.0);
+  EXPECT_DOUBLE_EQ(max_corner.y, 5.0);
+  EXPECT_DOUBLE_EQ(max_corner.z, 7.0);
 }
 
 TEST(AABBTest, GetMinMaxCornersAllNegative) {
@@ -222,13 +222,13 @@ TEST(AABBTest, GetMinMaxCornersAllNegative) {
   point_t<double> min_corner = aabb.get_min_corner();
   point_t<double> max_corner = aabb.get_max_corner();
   
-  EXPECT_DOUBLE_EQ(min_corner.get_x(), -4.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_y(), -5.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_z(), -6.0);
+  EXPECT_DOUBLE_EQ(min_corner.x, -4.0);
+  EXPECT_DOUBLE_EQ(min_corner.y, -5.0);
+  EXPECT_DOUBLE_EQ(min_corner.z, -6.0);
   
-  EXPECT_DOUBLE_EQ(max_corner.get_x(), -1.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_y(), -2.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_z(), -1.0);
+  EXPECT_DOUBLE_EQ(max_corner.x, -1.0);
+  EXPECT_DOUBLE_EQ(max_corner.y, -2.0);
+  EXPECT_DOUBLE_EQ(max_corner.z, -1.0);
 }
 
 TEST(AABBTest, GetMinMaxCornersMixedSigns) {
@@ -242,13 +242,13 @@ TEST(AABBTest, GetMinMaxCornersMixedSigns) {
   point_t<double> min_corner = aabb.get_min_corner();
   point_t<double> max_corner = aabb.get_max_corner();
   
-  EXPECT_DOUBLE_EQ(min_corner.get_x(), -1.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_y(), -4.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_z(), -3.0);
+  EXPECT_DOUBLE_EQ(min_corner.x, -1.0);
+  EXPECT_DOUBLE_EQ(min_corner.y, -4.0);
+  EXPECT_DOUBLE_EQ(min_corner.z, -3.0);
   
-  EXPECT_DOUBLE_EQ(max_corner.get_x(), 3.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_y(), 2.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_z(), 5.0);
+  EXPECT_DOUBLE_EQ(max_corner.x, 3.0);
+  EXPECT_DOUBLE_EQ(max_corner.y, 2.0);
+  EXPECT_DOUBLE_EQ(max_corner.z, 5.0);
 }
 
 TEST(AABBTest, IntersectionIdenticalBoxesGetCorner) {
@@ -282,8 +282,8 @@ TEST(AABBTest, IntersectionOverlappingBoxesGetCorner) {
   AABB_t<double> aabb2(triangle2);
   
   // Verify the corners are as expected
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_x(), 0.0);
-  EXPECT_DOUBLE_EQ(aabb2.get_min_corner().get_x(), 0.5);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().x, 0.0);
+  EXPECT_DOUBLE_EQ(aabb2.get_min_corner().x, 0.5);
   
   EXPECT_TRUE(aabb1.does_inter(aabb2));
   EXPECT_TRUE(aabb2.does_inter(aabb1));
@@ -303,7 +303,7 @@ TEST(AABBTest, NoIntersectionSeparatedBoxesGetCorner) {
   AABB_t<double> aabb2(triangle2);
   
   // Verify boxes don't overlap by checking corners
-  EXPECT_TRUE(aabb1.get_max_corner().get_x() < aabb2.get_min_corner().get_x());
+  EXPECT_TRUE(aabb1.get_max_corner().x < aabb2.get_min_corner().x);
   
   EXPECT_FALSE(aabb1.does_inter(aabb2));
   EXPECT_FALSE(aabb2.does_inter(aabb1));
@@ -321,13 +321,13 @@ TEST(AABBTest, SinglePointTriangleCorners) {
   point_t<double> max_corner = aabb.get_max_corner();
   
   // For single point, min and max should be identical
-  EXPECT_DOUBLE_EQ(min_corner.get_x(), 5.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_y(), 5.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_z(), 5.0);
+  EXPECT_DOUBLE_EQ(min_corner.x, 5.0);
+  EXPECT_DOUBLE_EQ(min_corner.y, 5.0);
+  EXPECT_DOUBLE_EQ(min_corner.z, 5.0);
   
-  EXPECT_DOUBLE_EQ(max_corner.get_x(), 5.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_y(), 5.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_z(), 5.0);
+  EXPECT_DOUBLE_EQ(max_corner.x, 5.0);
+  EXPECT_DOUBLE_EQ(max_corner.y, 5.0);
+  EXPECT_DOUBLE_EQ(max_corner.z, 5.0);
   
   EXPECT_TRUE(min_corner == max_corner);
 }
@@ -343,13 +343,13 @@ TEST(AABBTest, DegenerateTriangleCorners) {
   point_t<double> min_corner = aabb.get_min_corner();
   point_t<double> max_corner = aabb.get_max_corner();
   
-  EXPECT_DOUBLE_EQ(min_corner.get_x(), 0.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_y(), 0.0);
-  EXPECT_DOUBLE_EQ(min_corner.get_z(), 0.0);
+  EXPECT_DOUBLE_EQ(min_corner.x, 0.0);
+  EXPECT_DOUBLE_EQ(min_corner.y, 0.0);
+  EXPECT_DOUBLE_EQ(min_corner.z, 0.0);
   
-  EXPECT_DOUBLE_EQ(max_corner.get_x(), 5.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_y(), 5.0);
-  EXPECT_DOUBLE_EQ(max_corner.get_z(), 5.0);
+  EXPECT_DOUBLE_EQ(max_corner.x, 5.0);
+  EXPECT_DOUBLE_EQ(max_corner.y, 5.0);
+  EXPECT_DOUBLE_EQ(max_corner.z, 5.0);
 }
 
 
@@ -366,13 +366,13 @@ TEST(AABBTest, PreciseCoordinatesThreeDecimalPlaces) {
   point_t<double> min_corner = aabb.get_min_corner();
   point_t<double> max_corner = aabb.get_max_corner();
   
-  EXPECT_DOUBLE_EQ(min_corner.get_x(), 0.123);
-  EXPECT_DOUBLE_EQ(min_corner.get_y(), 2.345);
-  EXPECT_DOUBLE_EQ(min_corner.get_z(), 2.345);
+  EXPECT_DOUBLE_EQ(min_corner.x, 0.123);
+  EXPECT_DOUBLE_EQ(min_corner.y, 2.345);
+  EXPECT_DOUBLE_EQ(min_corner.z, 2.345);
   
-  EXPECT_DOUBLE_EQ(max_corner.get_x(), 4.567);
-  EXPECT_DOUBLE_EQ(max_corner.get_y(), 5.678);
-  EXPECT_DOUBLE_EQ(max_corner.get_z(), 6.789);
+  EXPECT_DOUBLE_EQ(max_corner.x, 4.567);
+  EXPECT_DOUBLE_EQ(max_corner.y, 5.678);
+  EXPECT_DOUBLE_EQ(max_corner.z, 6.789);
 }
 
 TEST(AABBTest, DegenerateTriangleSinglePoint) {
@@ -388,12 +388,12 @@ TEST(AABBTest, DegenerateTriangleSinglePoint) {
   point_t<double> max_corner = aabb.get_max_corner();
   
   // For single point, min and max should be identical
-  EXPECT_DOUBLE_EQ(min_corner.get_x(), 2.718);
-  EXPECT_DOUBLE_EQ(min_corner.get_y(), 3.142);
-  EXPECT_DOUBLE_EQ(min_corner.get_z(), 1.618);
-  EXPECT_DOUBLE_EQ(max_corner.get_x(), 2.718);
-  EXPECT_DOUBLE_EQ(max_corner.get_y(), 3.142);
-  EXPECT_DOUBLE_EQ(max_corner.get_z(), 1.618);
+  EXPECT_DOUBLE_EQ(min_corner.x, 2.718);
+  EXPECT_DOUBLE_EQ(min_corner.y, 3.142);
+  EXPECT_DOUBLE_EQ(min_corner.z, 1.618);
+  EXPECT_DOUBLE_EQ(max_corner.x, 2.718);
+  EXPECT_DOUBLE_EQ(max_corner.y, 3.142);
+  EXPECT_DOUBLE_EQ(max_corner.z, 1.618);
 }
 
 TEST(AABBTest, DegenerateTriangleCollinearPoints) {
@@ -409,13 +409,13 @@ TEST(AABBTest, DegenerateTriangleCollinearPoints) {
   point_t<double> max_corner = aabb.get_max_corner();
   
   // Should create AABB from min to max of all points
-  EXPECT_DOUBLE_EQ(min_corner.get_x(), 0.111);
-  EXPECT_DOUBLE_EQ(min_corner.get_y(), 0.222);
-  EXPECT_DOUBLE_EQ(min_corner.get_z(), 0.333);
+  EXPECT_DOUBLE_EQ(min_corner.x, 0.111);
+  EXPECT_DOUBLE_EQ(min_corner.y, 0.222);
+  EXPECT_DOUBLE_EQ(min_corner.z, 0.333);
   
-  EXPECT_DOUBLE_EQ(max_corner.get_x(), 0.555);
-  EXPECT_DOUBLE_EQ(max_corner.get_y(), 1.110);
-  EXPECT_DOUBLE_EQ(max_corner.get_z(), 1.665);
+  EXPECT_DOUBLE_EQ(max_corner.x, 0.555);
+  EXPECT_DOUBLE_EQ(max_corner.y, 1.110);
+  EXPECT_DOUBLE_EQ(max_corner.z, 1.665);
 }
 
 TEST(AABBTest, VerySmallTrianglePreciseCoordinates) {
@@ -430,13 +430,13 @@ TEST(AABBTest, VerySmallTrianglePreciseCoordinates) {
   point_t<double> min_corner = aabb.get_min_corner();
   point_t<double> max_corner = aabb.get_max_corner();
   
-  EXPECT_DOUBLE_EQ(min_corner.get_x(), 100.001);
-  EXPECT_DOUBLE_EQ(min_corner.get_y(), 200.001);
-  EXPECT_DOUBLE_EQ(min_corner.get_z(), 300.002);
+  EXPECT_DOUBLE_EQ(min_corner.x, 100.001);
+  EXPECT_DOUBLE_EQ(min_corner.y, 200.001);
+  EXPECT_DOUBLE_EQ(min_corner.z, 300.002);
   
-  EXPECT_DOUBLE_EQ(max_corner.get_x(), 100.002);
-  EXPECT_DOUBLE_EQ(max_corner.get_y(), 200.003);
-  EXPECT_DOUBLE_EQ(max_corner.get_z(), 300.004);
+  EXPECT_DOUBLE_EQ(max_corner.x, 100.002);
+  EXPECT_DOUBLE_EQ(max_corner.y, 200.003);
+  EXPECT_DOUBLE_EQ(max_corner.z, 300.004);
 }
 
 TEST(AABBTest, MixedPreciseCoordinatesIntersectionTest) {
@@ -455,8 +455,8 @@ TEST(AABBTest, MixedPreciseCoordinatesIntersectionTest) {
   AABB_t<double> aabb2(triangle2);
   
   // Verify corners
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_x(), 3.333);
-  EXPECT_DOUBLE_EQ(aabb2.get_min_corner().get_x(), 3.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().x, 3.333);
+  EXPECT_DOUBLE_EQ(aabb2.get_min_corner().x, 3.000);
   
   // They should intersect since aabb1 max(3.333) > aabb2 min(3.000)
   EXPECT_TRUE(aabb1.does_inter(aabb2));
@@ -480,12 +480,12 @@ TEST(AABBTest, UniteWithBasicCase) {
   
   aabb1.unite_with(aabb2);
   
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_x(), 1.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_y(), 2.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_z(), 3.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_x(), 7.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_y(), 8.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_z(), 9.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().x, 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().y, 2.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().z, 3.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().x, 7.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().y, 8.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().z, 9.000);
 }
 
 TEST(AABBTest, UniteWithOverlappingBoxes) {
@@ -501,12 +501,12 @@ TEST(AABBTest, UniteWithOverlappingBoxes) {
   
   aabb1.unite_with(aabb2);
   
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_x(), 1.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_y(), 1.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_z(), 0.500);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_x(), 5.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_y(), 6.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_z(), 5.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().x, 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().y, 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().z, 0.500);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().x, 5.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().y, 6.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().z, 5.000);
 }
 
 TEST(AABBTest, UniteWithContainedBox) {
@@ -523,12 +523,12 @@ TEST(AABBTest, UniteWithContainedBox) {
   aabb1.unite_with(aabb2);
   
   // Should remain the same since aabb1 already contains aabb2
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_x(), 1.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_y(), 1.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_z(), 1.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_x(), 6.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_y(), 6.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_z(), 6.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().x, 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().y, 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().z, 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().x, 6.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().y, 6.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().z, 6.000);
 }
 
 TEST(AABBTest, UniteWithSinglePointBox) {
@@ -544,12 +544,12 @@ TEST(AABBTest, UniteWithSinglePointBox) {
   
   aabb1.unite_with(aabb2);
   
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_x(), 1.500);
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_y(), 3.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_z(), 3.500);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_x(), 5.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_y(), 8.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_z(), 7.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().x, 1.500);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().y, 3.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().z, 3.500);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().x, 5.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().y, 8.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().z, 7.000);
 }
 
 TEST(AABBTest, GetLongestAxisX) {
@@ -623,6 +623,6 @@ TEST(AABBTest, UniteAndLongestAxisCombined) {
   
   // After unite, Y axis should be longest (range 7.000)
   EXPECT_EQ(aabb1.get_longest_axis_ind(), utils::axis_t::Y);
-  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().get_y(), 1.000);
-  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().get_y(), 8.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_min_corner().y, 1.000);
+  EXPECT_DOUBLE_EQ(aabb1.get_max_corner().y, 8.000);
 }

@@ -44,7 +44,7 @@ class point_t {
  public:
   point_t() = default;
 
-  point_t(T x, T y, T z) : x_(x), y_(y), z_(z) {}
+  point_t(T x, T y, T z) : x(x), y(y), z(z) {}
 
   [[nodiscard]] T get_len_sq() const;
 
@@ -57,9 +57,6 @@ class point_t {
   [[nodiscard]] point_t operator+(const point_t& other) const;
   [[nodiscard]] point_t operator-(const point_t& other) const;
 
-  [[nodiscard]] T get_x() const;
-  [[nodiscard]] T get_y() const;
-  [[nodiscard]] T get_z() const;
   [[nodiscard]] T get_coord_by_axis_name(utils::axis_t axis) const;
 
   template <typename U>
@@ -90,8 +87,9 @@ class point_t {
 
   [[nodiscard]] point_t operator*(T coeff) const;
 
-
   [[nodiscard]] bool operator==(const vector_t<T>& other) const;
+
+  [[nodiscard]] point_t& operator=(const point_t<T>& other) = default;
 
   template<typename U>
   friend std::istream& operator>>(std::istream& in_stream, point_t<U>& point);
@@ -99,15 +97,15 @@ class point_t {
   template<typename U>
   friend std::ostream& operator<<(std::ostream& out_stream, const point_t<U>& point);
 
- private:
-  T x_;
-  T y_;
-  T z_;
+ public:
+  T x{};
+  T y{};
+  T z{};
 };
 
 template<typename U>
 [[nodiscard]] inline U point_t<U>::get_len_sq() const {
-  return utils::sqr(x_) + utils::sqr(y_) + utils::sqr(z_);
+  return utils::sqr(x) + utils::sqr(y) + utils::sqr(z);
 }
 
 template<typename U>
@@ -131,51 +129,44 @@ template<typename U>
 inline void point_t<U>::norm() {
   U len = get_len();
   if (utils::sign(len) != 0) {
-    x_ /= len;
-    y_ /= len;
-    z_ /= len;
+    x /= len;
+    y /= len;
+    z /= len;
   }
 }
 
 template<typename U>
 [[nodiscard]] bool point_t<U>::is_zero() const {
   // ASK: maybe this is better: return utils::sign(get_len_sq()) == 0;
-  return utils::sign(x_) == 0 &&
-         utils::sign(y_) == 0 &&
-         utils::sign(z_) == 0;
+  return utils::sign(x) == 0 &&
+         utils::sign(y) == 0 &&
+         utils::sign(z) == 0;
 }
 
 template<typename U>
 [[nodiscard]] inline point_t<U> point_t<U>::operator+(const point_t<U>& other) const {
-  point_t<U> res(x_ + other.x_, y_ + other.y_, z_ + other.z_);
+  point_t<U> res(x + other.x, y + other.y, z + other.z);
   return res;
 }
 
 template<typename U>
 [[nodiscard]] inline point_t<U> point_t<U>::operator-(const point_t<U>& other) const {
-  point_t<U> res(x_ - other.x_, y_ - other.y_, z_ - other.z_);
+  point_t<U> res(x - other.x, y - other.y, z - other.z);
   return res;
 }
 
 template<typename U>
-[[nodiscard]] inline U point_t<U>::get_x() const { return x_; }
-template<typename U>
-[[nodiscard]] inline U point_t<U>::get_y() const { return y_; }
-template<typename U>
-[[nodiscard]] inline U point_t<U>::get_z() const { return z_; }
-template<typename U>
 [[nodiscard]] U point_t<U>::get_coord_by_axis_name(utils::axis_t axis) const {
   switch (axis) {
-    case utils::axis_t::X: return x_;
-    case utils::axis_t::Y: return y_;
-    case utils::axis_t::Z: return z_;
+    case utils::axis_t::X: return x;
+    case utils::axis_t::Y: return y;
+    case utils::axis_t::Z: return z;
     default:
       assert(false);
       std::cerr << "Error: invalid axis name..." << std::endl;
       return 0;
   }
 }
-
 
 namespace vec_ops {
 
@@ -185,9 +176,9 @@ template<typename U>
   const point_t<U>& rhs
 ) {
   point_t<U> res = lhs;
-  if (utils::sign(rhs.x_ - lhs.x_) > 0) res.x_ = rhs.x_;
-  if (utils::sign(rhs.y_ - lhs.y_) > 0) res.y_ = rhs.y_;
-  if (utils::sign(rhs.z_ - lhs.z_) > 0) res.z_ = rhs.z_;
+  if (utils::sign(rhs.x - lhs.x) > 0) res.x = rhs.x;
+  if (utils::sign(rhs.y - lhs.y) > 0) res.y = rhs.y;
+  if (utils::sign(rhs.z - lhs.z) > 0) res.z = rhs.z;
   return res;
 }
 
@@ -197,16 +188,16 @@ template<typename U>
   const point_t<U>& rhs
 ) {
   point_t<U> res = lhs;
-  if (utils::sign(rhs.x_ - lhs.x_) < 0) res.x_ = rhs.x_;
-  if (utils::sign(rhs.y_ - lhs.y_) < 0) res.y_ = rhs.y_;
-  if (utils::sign(rhs.z_ - lhs.z_) < 0) res.z_ = rhs.z_;
+  if (utils::sign(rhs.x - lhs.x) < 0) res.x = rhs.x;
+  if (utils::sign(rhs.y - lhs.y) < 0) res.y = rhs.y;
+  if (utils::sign(rhs.z - lhs.z) < 0) res.z = rhs.z;
   return res;
 }
 
 // dot product of 2 vectors
 template<typename U>
 [[nodiscard]] U dot(const point_t<U>& lhs, const point_t<U>& rhs) {
-  return lhs.x_ * rhs.x_ + lhs.y_ * rhs.y_ + lhs.z_ * rhs.z_;
+  return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 }
 
 // cross product of 2 vectors
@@ -220,9 +211,9 @@ template<typename U>
   e1, e2, e3 - basis vectors
   */
   point_t res{
-      lhs.y_ * rhs.z_ - rhs.y_ * lhs.z_,
-    -(lhs.x_ * rhs.z_ - rhs.x_ * lhs.z_),
-      lhs.x_ * rhs.y_ - rhs.x_ * lhs.y_
+      lhs.y * rhs.z - rhs.y * lhs.z,
+    -(lhs.x * rhs.z - rhs.x * lhs.z),
+      lhs.x * rhs.y - rhs.x * lhs.y
   };
 
   return res;
@@ -241,14 +232,14 @@ template<typename U>
 
 template<typename U>
 inline point_t<U> point_t<U>::operator*(U coeff) const {
-  return point_t<U>(x_ * coeff, y_ * coeff, z_ * coeff);
+  return point_t<U>(x * coeff, y * coeff, z * coeff);
 }
 
 template<typename U>
 [[nodiscard]] inline bool point_t<U>::operator==(const vector_t<U>& other) const {
-  return utils::sign(x_ - other.x_) == 0 &&
-         utils::sign(y_ - other.y_) == 0 &&
-         utils::sign(z_ - other.z_) == 0;
+  return utils::sign(x - other.x) == 0 &&
+         utils::sign(y - other.y) == 0 &&
+         utils::sign(z - other.z) == 0;
 }
 
 template<typename U>

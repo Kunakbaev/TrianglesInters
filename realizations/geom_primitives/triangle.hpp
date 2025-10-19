@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <iostream>
 #include <vector>
 
@@ -11,13 +12,6 @@ template<typename T>
 class triangle_t {
  public:
   triangle_t() = default;
-  // Default constructor that properly initializes all members
-  // triangle_t() 
-  //   : a_(), b_(), c_(),
-  //     is_triang_segm_(false),
-  //     plane_(),  // Make sure plane_t has default constructor
-  //     deg_case_segm_(), bounding_box_() {  // Make sure segment_t has default constructor
-  // }
 
   triangle_t(const point_t<T>& a, const point_t<T>& b, const point_t<T>& c);
 
@@ -31,8 +25,6 @@ class triangle_t {
 
   [[nodiscard]] std::vector<point_t<T>> get_points() const;
 
-  // [[nodiscard]] bool operator==(const triangle_t& other) const;
-
   template<typename U>
   friend std::istream& operator>>(std::istream& in_stream, triangle_t<U>& triangle);
 
@@ -44,7 +36,7 @@ class triangle_t {
   [[nodiscard]] bool is_intersected_by_segm(const segment_t<T>& segm) const;
 
  private:
-  [[nodiscard]] std::vector<segment_t<T>> get_segments() const;
+  [[nodiscard]] std::array<segment_t<T>, 3> get_segments() const;
 
   // return 1, if B is A, rotated counterclockwise
   // return -1 if rotation is clockwise, 0 if they are collinear
@@ -61,7 +53,7 @@ class triangle_t {
   point_t<T> center_;
   
   // ASK: it's convenient to use those, but takes more memory
-  bool         is_triang_segm_;
+  bool         is_triang_segm_{};
   plane_t<T>   plane_;
   segment_t<T> deg_case_segm_;
 };
@@ -89,12 +81,12 @@ triangle_t<T>::triangle_t(const point_t<T>& a, const point_t<T>& b, const point_
 }
 
 template<typename U>
-[[nodiscard]] inline std::vector<segment_t<U>> triangle_t<U>::get_segments() const {
-  std::vector<segment_t<U>> segms = {
-    {a_, b_}, {b_, c_}, {c_, a_}
+[[nodiscard]] inline std::array<segment_t<U>, 3> triangle_t<U>::get_segments() const {
+  return {
+    segment_t<U>{a_, b_},
+    segment_t<U>{b_, c_},
+    segment_t<U>{c_, a_}
   };
-
-  return segms;
 }
 
 // return 1, if PB is PA, rotated counterclockwise
@@ -132,7 +124,7 @@ inline bool triangle_t<U>::is_intersected_by_segm(const segment_t<U>& segm) cons
   }
 
   if (plane_.is_segment_on_plane(segm)) {
-    std::vector<segment_t<U>> triang_segms = get_segments();
+    std::array<segment_t<U>, 3> triang_segms = get_segments();
     for (const auto& triang_segm : triang_segms) {
       if (triang_segm.does_inter(segm)) {
         return true;
@@ -154,7 +146,7 @@ inline bool triangle_t<U>::is_intersected_by_segm(const segment_t<U>& segm) cons
 
 template<typename U>
 inline bool triangle_t<U>::does_intersect_helper(const triangle_t<U>& other) const {
-  std::vector<segment_t<U>> segms = other.get_segments();
+  std::array<segment_t<U>, 3> segms = other.get_segments();
   for (const auto& segm : segms) {
     if (is_intersected_by_segm(segm)) {
       return true;
