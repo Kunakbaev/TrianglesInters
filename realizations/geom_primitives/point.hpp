@@ -138,9 +138,9 @@ inline void point_t<U>::norm() {
 template<typename U>
 [[nodiscard]] bool point_t<U>::is_zero() const {
   // ASK: maybe this is better: return utils::sign(get_len_sq()) == 0;
-  return utils::sign(x) == 0 &&
-         utils::sign(y) == 0 &&
-         utils::sign(z) == 0;
+  return utils::sign(x) == utils::signs_t::ZERO &&
+         utils::sign(y) == utils::signs_t::ZERO &&
+         utils::sign(z) == utils::signs_t::ZERO;
 }
 
 template<typename U>
@@ -176,9 +176,9 @@ template<typename U>
   const point_t<U>& rhs
 ) {
   point_t<U> res = lhs;
-  if (utils::sign(rhs.x - lhs.x) > 0) res.x = rhs.x;
-  if (utils::sign(rhs.y - lhs.y) > 0) res.y = rhs.y;
-  if (utils::sign(rhs.z - lhs.z) > 0) res.z = rhs.z;
+  if (utils::sign(rhs.x - lhs.x) == utils::signs_t::POS) res.x = rhs.x;
+  if (utils::sign(rhs.y - lhs.y) == utils::signs_t::POS) res.y = rhs.y;
+  if (utils::sign(rhs.z - lhs.z) == utils::signs_t::POS) res.z = rhs.z;
   return res;
 }
 
@@ -188,9 +188,9 @@ template<typename U>
   const point_t<U>& rhs
 ) {
   point_t<U> res = lhs;
-  if (utils::sign(rhs.x - lhs.x) < 0) res.x = rhs.x;
-  if (utils::sign(rhs.y - lhs.y) < 0) res.y = rhs.y;
-  if (utils::sign(rhs.z - lhs.z) < 0) res.z = rhs.z;
+  if (utils::sign(rhs.x - lhs.x) == utils::signs_t::NEG) res.x = rhs.x;
+  if (utils::sign(rhs.y - lhs.y) == utils::signs_t::NEG) res.y = rhs.y;
+  if (utils::sign(rhs.z - lhs.z) == utils::signs_t::NEG) res.z = rhs.z;
   return res;
 }
 
@@ -237,9 +237,9 @@ inline point_t<U> point_t<U>::operator*(U coeff) const {
 
 template<typename U>
 [[nodiscard]] inline bool point_t<U>::operator==(const vector_t<U>& other) const {
-  return utils::sign(x - other.x) == 0 &&
-         utils::sign(y - other.y) == 0 &&
-         utils::sign(z - other.z) == 0;
+  return utils::sign(x - other.x) == utils::signs_t::ZERO &&
+         utils::sign(y - other.y) == utils::signs_t::ZERO &&
+         utils::sign(z - other.z) == utils::signs_t::ZERO;
 }
 
 template<typename U>

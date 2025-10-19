@@ -76,7 +76,7 @@ template<typename U>
   // }
 
   U dot_prod = vec_ops::dot(point - base_, norm_);
-  return utils::sign(dot_prod) == 0;
+  return utils::sign(dot_prod) == utils::signs_t::ZERO;
 }
 
 template <typename U>
@@ -96,7 +96,7 @@ inline std::pair<point_t<U>, bool> plane_t<U>::intersect_by_segm(
   vector_t<U> segm_dir = segm.get_dir();
   U numerator = vec_ops::dot(norm_, base_ - segm.get_start());
   U denom     = vec_ops::dot(norm_, segm_dir);
-  if (utils::sign(denom) == 0) {
+  if (utils::sign(denom) == utils::signs_t::ZERO) {
     // std::cerr << "denom = 0" << std::endl;
     // segment is parallel to triangle plane
     // so we check if both points are contained in the plane
@@ -110,7 +110,8 @@ inline std::pair<point_t<U>, bool> plane_t<U>::intersect_by_segm(
   }
 
   U segm_time = numerator / denom;
-  if (utils::sign(segm_time) < 0 || utils::sign(1 - segm_time) < 0) {
+  if (utils::sign(    segm_time) == utils::signs_t::NEG ||
+      utils::sign(1 - segm_time) == utils::signs_t::NEG) {
     // intersection point is not on the segment
     return {{}, false};
   }

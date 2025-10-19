@@ -277,7 +277,7 @@ inline void BVH_t<U>::partition_triangles_by_ort_to_axis(
   }
 
   auto cmp_proj_pairs = [](const proj_pair_t& lhs, const proj_pair_t& rhs){
-    return utils::sign(lhs.first - rhs.first) < 0;
+    return utils::sign(lhs.first - rhs.first) < utils::signs_t::ZERO;
   };
   const std::size_t mid_ind = indices.size() / 2;
   std::nth_element(projection_pairs.begin(),
@@ -290,7 +290,7 @@ inline void BVH_t<U>::partition_triangles_by_ort_to_axis(
   lhs.clear();
   rhs.clear();
   for (auto& [proj_coord, ind] : projection_pairs) {
-    if (utils::sign(proj_coord - partition_coord) <= 0) {
+    if (utils::sign(proj_coord - partition_coord) <= utils::signs_t::ZERO) {
       lhs.emplace_back(ind);
     } else {
       rhs.emplace_back(ind);

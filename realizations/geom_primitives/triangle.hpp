@@ -40,7 +40,7 @@ class triangle_t {
 
   // return 1, if B is A, rotated counterclockwise
   // return -1 if rotation is clockwise, 0 if they are collinear
-  [[nodiscard]] int rotation_sign(
+  [[nodiscard]] utils::signs_t rotation_sign(
     const point_t<T>& p, const point_t<T>& a, const point_t<T>& b) const;
 
   [[nodiscard]] bool does_intersect_helper(const triangle_t& other) const;
@@ -92,7 +92,7 @@ template<typename U>
 // return 1, if PB is PA, rotated counterclockwise
 // return -1 if rotation is clockwise, 0 if they are collinear
 template<typename U>
-[[nodiscard]] inline int triangle_t<U>::rotation_sign(
+[[nodiscard]] inline utils::signs_t triangle_t<U>::rotation_sign(
   const point_t<U>& p, const point_t<U>& a, const point_t<U>& b) const {
   return utils::sign(vec_ops::dot(vec_ops::cross(a - p, b - p), plane_.get_norm_vec()));
 }
@@ -108,12 +108,16 @@ inline bool triangle_t<U>::is_point_inside_triang(const point_t<U>& point) const
     return false;
   }
 
-  int sign1 = rotation_sign(point, a_, b_);
-  int sign2 = rotation_sign(point, b_, c_);
-  int sign3 = rotation_sign(point, c_, a_);
+  utils::signs_t sign1 = rotation_sign(point, a_, b_);
+  utils::signs_t sign2 = rotation_sign(point, b_, c_);
+  utils::signs_t sign3 = rotation_sign(point, c_, a_);
 
-  bool all_non_neg = sign1 <= 0 && sign2 <= 0 && sign3 <= 0;
-  bool all_non_pos = sign1 >= 0 && sign2 >= 0 && sign3 >= 0;
+  bool all_non_neg = sign1 >= utils::signs_t::ZERO &&
+                     sign2 >= utils::signs_t::ZERO &&
+                     sign3 >= utils::signs_t::ZERO;
+  bool all_non_pos = sign1 <= utils::signs_t::ZERO &&
+                     sign2 <= utils::signs_t::ZERO &&
+                     sign3 <= utils::signs_t::ZERO;
   return all_non_neg || all_non_pos;
 }
 

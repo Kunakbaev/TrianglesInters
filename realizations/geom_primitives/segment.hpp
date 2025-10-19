@@ -81,8 +81,9 @@ template<typename U>
 
   U dot_prod = vec_ops::dot(get_dir(), start2point);
   // std::cerr << "dot_prod : " << dot_prod << " segm_len : " << get_dir().get_len_sq() << std::endl;
-  if (utils::sign(dot_prod) < 0) return false;
-  if (utils::sign(dot_prod - get_dir().get_len_sq()) > 0) return false;
+  if (utils::sign(dot_prod) == utils::signs_t::NEG) return false;
+  if (utils::sign(dot_prod - get_dir().get_len_sq())
+    == utils::signs_t::POS) return false;
 
   return true;
 
@@ -106,7 +107,7 @@ template<typename U>
 [[nodiscard]] bool segment_t<U>::does_inter(const segment_t<U>& other) const {
   U mix = vec_ops::mixed_prod(get_dir(), other.get_dir(), other.get_start() - get_start());
   // std::cout << "mix : " << mix << std::endl;
-  if (utils::sign(mix) != 0) {
+  if (utils::sign(mix) != utils::signs_t::ZERO) {
     return false;
   }
 
@@ -131,7 +132,7 @@ template<typename U>
   U numerator = vec_ops::dot(cross_prod_numerator, norm);
   U denominator = norm.get_len_sq();
   // std::cerr <<  "denominatro : " << denominator << std::endl;
-  if (utils::sign(denominator) == 0) {
+  if (utils::sign(denominator) == utils::signs_t::ZERO) {
     // both segments lie on the same line
     // we already checked that case with check_endpoints_inters method
     return false;
