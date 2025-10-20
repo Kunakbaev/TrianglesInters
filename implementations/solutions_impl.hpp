@@ -1,7 +1,7 @@
 #pragma once
 
 #include "triangle.hpp"
-#include "BVH_solution/BVH.hpp"
+#include "BVH.hpp"
 
 struct naive_solution_tag {};
 struct opt_bvh_solution_tag {};

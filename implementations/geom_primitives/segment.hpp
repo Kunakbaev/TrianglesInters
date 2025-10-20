@@ -22,9 +22,6 @@ class segment_t {
 
   [[nodiscard]] bool does_inter(const segment_t& other) const;
 
-  template<typename U>
-  friend std::ostream& operator<<(std::ostream& out_stream, const segment_t<U>& segm);
-
  private:
   static bool does_lie_in_range(T one, T two, T coord);
 
@@ -148,6 +145,6 @@ template<typename U>
 
 template<typename U>
 std::ostream& operator<<(std::ostream& out_stream, const segment_t<U>& segm) {
-  out_stream << "{a: " << segm.a_ << ", b: " << segm.b_ << "}";
+  out_stream << "{a: " << segm.get_start() << ", b: " << segm.get_finish() << "}";
   return out_stream;
 }

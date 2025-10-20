@@ -6,7 +6,7 @@
 
 #include "plane.hpp"
 #include "point.hpp"
-#include "BVH_solution/AABB.hpp"
+#include "AABB.hpp"
 
 template<typename T>
 class triangle_t {
@@ -23,13 +23,7 @@ class triangle_t {
 
   [[nodiscard]] point_t<T> get_centroid() const;
 
-  [[nodiscard]] std::vector<point_t<T>> get_points() const;
-
-  template<typename U>
-  friend std::istream& operator>>(std::istream& in_stream, triangle_t<U>& triangle);
-
-  template<typename U>
-  friend std::ostream& operator<<(std::ostream& out_stream, const triangle_t<U>& triangle);
+  [[nodiscard]] std::array<point_t<T>, 3> get_points() const;
 
   [[nodiscard]] bool is_point_inside_triang(const point_t<T>& point) const;
 
@@ -182,7 +176,7 @@ template <typename U>
 }
 
 template <typename U>
-[[nodiscard]] std::vector<point_t<U>> triangle_t<U>::get_points() const {
+[[nodiscard]] std::array<point_t<U>, 3> triangle_t<U>::get_points() const {
   return {a_, b_, c_};
 }
 
@@ -192,13 +186,14 @@ std::istream& operator>>(std::istream& in_stream, triangle_t<U>& triangle) {
   point_t<U> b;
   point_t<U> c;
   in_stream >> a >> b >> c;
-  triangle = triangle_t<U>(a, b, c);
+  triangle = triangle_t<U>{a, b, c};
 
   return in_stream;
 }
 
 template<typename U>
 std::ostream& operator<<(std::ostream& out_stream, const triangle_t<U>& triangle) {
-  out_stream << "{" << triangle.a_ << ", " << triangle.b_ << ", " << triangle.c_ << "}";
+  std::array<point_t<U>, 3> points = triangle.get_points();
+  out_stream << "{" << points[0] << ", " << points[1] << ", " << points[2] << "}";
   return out_stream;
 }

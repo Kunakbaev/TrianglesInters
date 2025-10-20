@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "BVH_solution/AABB.hpp"
+#include "AABB.hpp"
 #include "triangle.hpp"
 
 TEST(AABBTest, IntersectionIdenticalBoxes) {

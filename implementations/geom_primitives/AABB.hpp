@@ -34,7 +34,7 @@ class AABB_t {
 
 template<typename T>
 AABB_t<T>::AABB_t(const triangle_t<T>& triangle) {
-  std::vector<point_t<T>> points = triangle.get_points();
+  std::array<point_t<T>, 3> points = triangle.get_points();
   corner_min_ = corner_max_ = points.front();
 
   // std::cerr << "bruh tire : " << triangle << std::endl;
