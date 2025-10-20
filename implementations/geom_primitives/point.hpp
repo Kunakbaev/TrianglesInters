@@ -50,7 +50,7 @@ class point_t {
 
   [[nodiscard]] T get_len() const;
 
-  void norm();
+  void norm() const;
 
   [[nodiscard]] bool is_zero() const;
 
@@ -59,43 +59,11 @@ class point_t {
 
   [[nodiscard]] T get_coord_by_axis_name(utils::axis_t axis) const;
 
-  template <typename U>
-  [[nodiscard]] friend point_t<U> vec_ops::get_max_of_2_points(
-    const point_t<U>& lhs,
-    const point_t<U>& rhs
-  );
-  template <typename U>
-  [[nodiscard]] friend point_t<U> vec_ops::get_min_of_2_points(
-    const point_t<U>& lhs,
-    const point_t<U>& rhs
-  );
-
-  // dot product of 2 vectors
-  template<typename U>
-  [[nodiscard]] friend U vec_ops::dot(const point_t<U>& lhs, const point_t<U>& rhs);
-
-  // cross product of 2 vectors
-  template<typename U>
-  [[nodiscard]] friend point_t<U> vec_ops::cross(const point_t<U>& lhs, const point_t<U>& rhs);
-
-  template<typename U>
-  [[nodiscard]] friend U vec_ops::mixed_prod(
-    const vector_t<U>& a,
-    const vector_t<U>& b,
-    const vector_t<U>& c
-  );
-
   [[nodiscard]] point_t operator*(T coeff) const;
 
   [[nodiscard]] bool operator==(const vector_t<T>& other) const;
 
   [[nodiscard]] point_t& operator=(const point_t<T>& other) = default;
-
-  template<typename U>
-  friend std::istream& operator>>(std::istream& in_stream, point_t<U>& point);
-
-  template<typename U>
-  friend std::ostream& operator<<(std::ostream& out_stream, const point_t<U>& point);
 
  public:
   T x{};
@@ -126,7 +94,7 @@ template<typename U>
 }
 
 template<typename U>
-inline void point_t<U>::norm() {
+inline void point_t<U>::norm() const {
   U len = get_len();
   if (utils::sign(len) != 0) {
     x /= len;

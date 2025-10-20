@@ -3,11 +3,15 @@
 
 #include "point.hpp"
 #include "triangle.hpp"
-#include "BVH_solution/solution.hpp"
+#include "solutions_impl.hpp"
+
+using BVH_fast_solution_double_t =
+  triangles_inters_solver_t<double, opt_bvh_solution_tag>;
+
 
 TEST(BVHFastSolutionTest, EmptyInput) {
   std::vector<triangle_t<double>> triangles;
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
 
   auto result = solver.get_inter_triangs_indices();
   EXPECT_TRUE(result.empty());
@@ -19,7 +23,7 @@ TEST(BVHFastSolutionTest, SingleTriangle) {
   point_t p3{0.0, 1.0, 0.0};
   
   std::vector<triangle_t<double>> triangles{triangle_t<double>{p1, p2, p3}};
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   EXPECT_TRUE(result.empty());
@@ -38,7 +42,7 @@ TEST(BVHFastSolutionTest, TwoIntersectingTriangles) {
     triangle_t<double>{a1, a2, a3},
     triangle_t<double>{b1, b2, b3}
   };
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   
@@ -65,7 +69,7 @@ TEST(BVHFastSolutionTest, MixedIntersectingAndNonIntersecting) {
     triangle_t<double>{b1, b2, b3},
     triangle_t<double>{c1, c2, c3}
   };
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   
@@ -93,7 +97,7 @@ TEST(BVHFastSolutionTest, AllTrianglesIntersecting) {
     triangle_t<double>{b1, b2, b3},
     triangle_t<double>{c1, c2, c3}
   };
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   
@@ -121,7 +125,7 @@ TEST(BVHFastSolutionTest, NoTrianglesIntersecting) {
     triangle_t<double>{b1, b2, b3},
     triangle_t<double>{c1, c2, c3}
   };
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   
@@ -146,7 +150,7 @@ TEST(BVHFastSolutionTest, CoplanarIntersectingTriangles) {
     triangle_t<double>{b1, b2, b3},
     triangle_t<double>{c1, c2, c3}
   };
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
 
@@ -169,7 +173,7 @@ TEST(BVHFastSolutionTest, DegenerateTriangle) {
     triangle_t<double>{a1, a2, a3},
     triangle_t<double>{b1, b2, b3}
   };
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   EXPECT_EQ(result.size(), 2);
@@ -188,7 +192,7 @@ TEST(BVHFastSolutionTest, SharedEdgeButNotIntersecting) {
     triangle_t<double>{a1, a2, a3},
     triangle_t<double>{b1, b2, b3}
   };
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   EXPECT_EQ(result.size(), 2);
@@ -207,7 +211,7 @@ TEST(BVHFastSolutionTest, TriangleInsideAnother) {
     triangle_t<double>{outer1, outer2, outer3},
     triangle_t<double>{inner1, inner2, inner3}
   };
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   EXPECT_EQ(result.size(), 2);
@@ -226,7 +230,7 @@ TEST(BVHFastSolutionTest, ZFightingPrecision) {
     triangle_t<double>{a1, a2, a3},
     triangle_t<double>{b1, b2, b3}
   };
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   EXPECT_EQ(result.size(), 2);
@@ -245,7 +249,7 @@ TEST(BVHFastSolutionTest, LargeCoordinates) {
     triangle_t<double>{a1, a2, a3},
     triangle_t<double>{b1, b2, b3}
   };
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   EXPECT_EQ(result.size(), 2);
@@ -264,7 +268,7 @@ TEST(BVHFastSolutionTest, IntersectingAtSinglePoint) {
     triangle_t<double>{a1, a2, a3},
     triangle_t<double>{b1, b2, b3}
   };
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   EXPECT_EQ(result.size(), 2);
@@ -298,7 +302,7 @@ TEST(BVHFastSolutionTest, DenseGridWithPartialOverlaps) {
     }
   }
   
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   auto result = solver.get_inter_triangs_indices();
   
   // Should have many intersections due to dense packing
@@ -332,7 +336,7 @@ TEST(BVHFastSolutionTest, IntersectingThinSlivers) {
     triangles.emplace_back(p1, p2, p3);
   }
   
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   auto result = solver.get_inter_triangs_indices();
   
   // All radial triangles intersect with many vertical ones
@@ -370,7 +374,7 @@ TEST(BVHFastSolutionTest, NestedHierarchyOfIntersections) {
     }
   }
   
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   auto result = solver.get_inter_triangs_indices();
   
   // Complex nested structure should have many intersections
@@ -401,7 +405,7 @@ TEST(BVHFastSolutionTest, PrecisionEdgeCases) {
   point_t b3{3.0, 0.0, 0.0};
   triangles.emplace_back(b1, b2, b3);
   
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   auto result = solver.get_inter_triangs_indices();
   
   // The precision triangles should intersect with each other
@@ -439,7 +443,7 @@ TEST(BVHFastSolutionTest, MixedDegenerateAndValid) {
   point_t d6{2.3, 2.0, 0.0};
   triangles.emplace_back(d4, d5, d6);
   
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   auto result = solver.get_inter_triangs_indices();
   
   // Should handle degenerate cases without crashing
@@ -467,7 +471,7 @@ TEST(BVHFastSolutionTest, Complex3DWeaving) {
     triangles.emplace_back(p4, p5, p6);
   }
   
-  BVH_fast_solution_t<double> solver{triangles};
+  BVH_fast_solution_double_t solver{triangles};
   auto result = solver.get_inter_triangs_indices();
 
   // Complex 3D weaving should produce many intersections

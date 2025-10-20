@@ -13,9 +13,8 @@ add_library(my_project_includes INTERFACE)
 
 target_include_directories(my_project_includes INTERFACE
   ${CMAKE_SOURCE_DIR}/3dPartyModules/LoggerLib/include
-  ${CMAKE_SOURCE_DIR}/realizations/geom_primitives
-  ${CMAKE_SOURCE_DIR}/realizations/bruteforce_solution
-  ${CMAKE_SOURCE_DIR}/realizations
+  ${CMAKE_SOURCE_DIR}/implementations/geom_primitives
+  ${CMAKE_SOURCE_DIR}/implementations
 )
 
 # ---------------------------------------------

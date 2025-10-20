@@ -1,12 +1,15 @@
 #include <gtest/gtest.h>
 #include "point.hpp"
 #include "triangle.hpp"
-#include "bruteforce_solution.hpp"
+#include "solutions_impl.hpp"
+
+using bruteforce_solution_double_t =
+  triangles_inters_solver_t<double, naive_solution_tag>;
 
 TEST(BruteforceSolutionTest, EmptyInput) {
   std::vector<triangle_t<double>> triangles;
-  bruteforce_solution_t solver{triangles};
-  
+  bruteforce_solution_double_t solver{triangles};
+
   auto result = solver.get_inter_triangs_indices();
   EXPECT_TRUE(result.empty());
 }
@@ -15,9 +18,9 @@ TEST(BruteforceSolutionTest, SingleTriangle) {
   point_t p1{0.0, 0.0, 0.0};
   point_t p2{1.0, 0.0, 0.0};
   point_t p3{0.0, 1.0, 0.0};
-  
+
   std::vector<triangle_t<double>> triangles{triangle_t<double>{p1, p2, p3}};
-  bruteforce_solution_t solver{triangles};
+  bruteforce_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   EXPECT_TRUE(result.empty());
@@ -36,7 +39,7 @@ TEST(BruteforceSolutionTest, TwoIntersectingTriangles) {
     triangle_t<double>{a1, a2, a3},
     triangle_t<double>{b1, b2, b3}
   };
-  bruteforce_solution_t solver{triangles};
+  bruteforce_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   
@@ -63,7 +66,7 @@ TEST(BruteforceSolutionTest, MixedIntersectingAndNonIntersecting) {
     triangle_t<double>{b1, b2, b3},
     triangle_t<double>{c1, c2, c3}
   };
-  bruteforce_solution_t solver{triangles};
+  bruteforce_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   
@@ -91,7 +94,7 @@ TEST(BruteforceSolutionTest, AllTrianglesIntersecting) {
     triangle_t<double>{b1, b2, b3},
     triangle_t<double>{c1, c2, c3}
   };
-  bruteforce_solution_t solver{triangles};
+  bruteforce_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   
@@ -119,7 +122,7 @@ TEST(BruteforceSolutionTest, NoTrianglesIntersecting) {
     triangle_t<double>{b1, b2, b3},
     triangle_t<double>{c1, c2, c3}
   };
-  bruteforce_solution_t solver{triangles};
+  bruteforce_solution_double_t solver{triangles};
   
   auto result = solver.get_inter_triangs_indices();
   

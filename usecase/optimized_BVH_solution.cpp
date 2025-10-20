@@ -2,10 +2,10 @@
 #include <vector>
 
 #include "logLib.hpp"
-#include "BVH_solution/solution.hpp"
+#include "solutions_impl.hpp"
 
 int main() {
-  BVH_fast_solution_t<double> BVH_solution;
+  triangles_inters_solver_t<double, opt_bvh_solution_tag> BVH_solution;
   BVH_solution.input();
   std::vector<std::size_t> indices =
     BVH_solution.get_inter_triangs_indices();
