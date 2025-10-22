@@ -2,26 +2,21 @@
 
 #include <array>
 #include <iostream>
+#include <string_view>
 #include <vector>
 
 #include "plane.hpp"
 #include "point.hpp"
-#include "AABB.hpp"
 
 template<typename T>
 class triangle_t {
  public:
   triangle_t() = default;
 
-  triangle_t(const point_t<T>& a, const point_t<T>& b, const point_t<T>& c);
+  triangle_t(const point_t<T>& a, const point_t<T>& b, const point_t<T>& c)
+    : a_(a), b_(b), c_(c) {}
 
   [[nodiscard]] bool does_intersect(const triangle_t& other) const;
-
-  [[nodiscard]] AABB_t<T> get_AABB() const;
-
-  [[nodiscard]] point_t<T> get_center() const;
-
-  [[nodiscard]] point_t<T> get_centroid() const;
 
   [[nodiscard]] std::array<point_t<T>, 3> get_points() const;
 
@@ -30,7 +25,17 @@ class triangle_t {
   [[nodiscard]] bool is_intersected_by_segm(const segment_t<T>& segm) const;
 
  private:
+  static constexpr std::string_view kPlaneCtorError =
+    "Error: plane_t can not be constructed from given points, plane is degenerate";
+
+ private:
   [[nodiscard]] std::array<segment_t<T>, 3> get_segments() const;
+
+  [[nodiscard]] plane_t<T> get_plane() const;
+
+  [[nodiscard]] bool is_triangle_degenerate() const;
+
+  [[nodiscard]] segment_t<T> get_deg_triang_case_segm() const;
 
   // return 1, if B is A, rotated counterclockwise
   // return -1 if rotation is clockwise, 0 if they are collinear
@@ -43,33 +48,7 @@ class triangle_t {
   point_t<T> a_;
   point_t<T> b_;
   point_t<T> c_;
-  AABB_t<T>  bounding_box_;
-  point_t<T> center_;
-  
-  // ASK: it's convenient to use those, but takes more memory
-  bool         is_triang_segm_{};
-  plane_t<T>   plane_;
-  segment_t<T> deg_case_segm_;
 };
-
-template<typename T>
-triangle_t<T>::triangle_t(const point_t<T>& a, const point_t<T>& b, const point_t<T>& c)
-    : a_(a), b_(b), c_(c), bounding_box_(*this),
-      center_((bounding_box_.get_max_corner() + bounding_box_.get_min_corner()) * static_cast<T>(0.5)),
-      is_triang_segm_(false), deg_case_segm_(a, b) {
-
-  // constructing plane_ from points may result in exception
-  try {
-    plane_ = plane_t<T>(a_, b_, c_);
-    is_triang_segm_ = false;
-  } catch(const std::invalid_argument&) {
-    is_triang_segm_ = true;
-    // ASK: cringe?
-         if (a == b) deg_case_segm_ = segment_t<T>(a, c);
-    else if (a == c) deg_case_segm_ = segment_t<T>(b, c);
-    // else             deg_case_segm_ = segment_t<T>(a, b);
-  }
-}
 
 template<typename U>
 [[nodiscard]] inline std::array<segment_t<U>, 3> triangle_t<U>::get_segments() const {
@@ -80,22 +59,51 @@ template<typename U>
   };
 }
 
+template <typename U>
+[[nodiscard]] bool triangle_t<U>::is_triangle_degenerate() const {
+  return !plane_t<U>::is_valid_plane(a_, b_, c_);
+}
+
+template <typename U>
+[[nodiscard]] plane_t<U> triangle_t<U>::get_plane() const {
+  assert(!is_triangle_degenerate());
+
+  try {
+    return {a_, b_, c_};
+  } catch(const std::invalid_argument&) {
+    assert(false && static_cast<const char*>(kPlaneCtorError.data()));
+  }
+}
+
+template <typename U>
+[[nodiscard]] segment_t<U> triangle_t<U>::get_deg_triang_case_segm() const {
+  assert(is_triangle_degenerate());
+
+       if (a_ == b_) return {a_, c_};
+  else if (a_ == c_) return {b_, c_};
+  else               return {a_, b_};
+}
+
 // return 1, if PB is PA, rotated counterclockwise
 // return -1 if rotation is clockwise, 0 if they are collinear
 template<typename U>
 [[nodiscard]] inline utils::signs_t triangle_t<U>::rotation_sign(
-  const point_t<U>& p, const point_t<U>& a, const point_t<U>& b) const {
-  return utils::sign(vec_ops::dot(vec_ops::cross(a - p, b - p), plane_.get_norm_vec()));
+  const point_t<U>& p,
+  const point_t<U>& a,
+  const point_t<U>& b
+) const {
+  plane_t plane = get_plane();
+  return utils::sign(vec_ops::dot(vec_ops::cross(a - p, b - p), plane.get_norm_vec()));
 }
 
 template<typename U>
 inline bool triangle_t<U>::is_point_inside_triang(const point_t<U>& point) const {
-  if (is_triang_segm_) {
-    return deg_case_segm_.does_contain_point(point);
+  if (is_triangle_degenerate()) {
+    return get_deg_triang_case_segm().does_contain_point(point);
   }
 
   // additional check, even though we call it only from method where point is already on the plane
-  if (!plane_.is_point_on_plane(point)) {
+  if (!get_plane().is_point_on_plane(point)) {
     return false;
   }
 
@@ -114,11 +122,12 @@ inline bool triangle_t<U>::is_point_inside_triang(const point_t<U>& point) const
 
 template<typename U>
 inline bool triangle_t<U>::is_intersected_by_segm(const segment_t<U>& segm) const {
-  if (is_triang_segm_) {
-    return deg_case_segm_.does_inter(segm);
+  if (is_triangle_degenerate()) {
+    return get_deg_triang_case_segm().does_inter(segm);
   }
 
-  if (plane_.is_segment_on_plane(segm)) {
+  plane_t plane = get_plane();
+  if (plane.is_segment_on_plane(segm)) {
     std::array<segment_t<U>, 3> triang_segms = get_segments();
     for (const auto& triang_segm : triang_segms) {
       if (triang_segm.does_inter(segm)) {
@@ -130,7 +139,7 @@ inline bool triangle_t<U>::is_intersected_by_segm(const segment_t<U>& segm) cons
            is_point_inside_triang(segm.get_finish());
   }
 
-  auto [inter, is_inter] = plane_.intersect_by_segm(segm);
+  auto [inter, is_inter] = plane.intersect_by_segm(segm);
   if (!is_inter) {
     return false;
   }
@@ -154,21 +163,6 @@ template<typename U>
 inline bool triangle_t<U>::does_intersect(const triangle_t<U>& other) const {
   return does_intersect_helper(other) ||
    other.does_intersect_helper(*this);
-}
-
-template <typename U>
-[[nodiscard]] AABB_t<U> triangle_t<U>::get_AABB() const {
-  return bounding_box_;
-}
-
-template <typename U>
-[[nodiscard]] point_t<U> triangle_t<U>::get_center() const {
-  return center_;
-}
-
-template <typename U>
-[[nodiscard]] point_t<U> triangle_t<U>::get_centroid() const {
-  return (a_ + b_ + c_) * static_cast<U>(0.5);
 }
 
 template <typename U>

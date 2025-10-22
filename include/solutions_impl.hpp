@@ -17,8 +17,6 @@ class triangles_inters_solver_t {
   triangles_inters_solver_t(const triangs_list_t& triangs)
       : num_triangs_(triangs.size()), triangs_(triangs) {}
 
-  // ~triangles_inters_solver_t() = default;
-
   std::vector<std::size_t> get_inter_triangs_indices() {
     return solve_impl(solution_tag{});
   }
@@ -41,21 +39,21 @@ class triangles_inters_solver_t {
     naive_solution_tag
   ) {
     std::vector<std::size_t> result;
-    std::vector<bool> is_marked(this->num_triangs_);
-    for (std::size_t cur_ind = 0; cur_ind < this->num_triangs_; ++cur_ind) {
+    std::vector<bool> is_marked(num_triangs_);
+    for (std::size_t cur_ind = 0; cur_ind < num_triangs_; ++cur_ind) {
       if (is_marked[cur_ind]) {
         result.emplace_back(cur_ind);
         continue;
       }
 
       bool is_inter = false;
-      const auto& cur = this->triangs_[cur_ind];
-      for (std::size_t other_ind = 0; other_ind < this->num_triangs_; ++other_ind) {
+      const auto& cur = triangs_[cur_ind];
+      for (std::size_t other_ind = 0; other_ind < num_triangs_; ++other_ind) {
         if (other_ind == cur_ind) {
           continue;
         }
 
-        if (cur.does_intersect(this->triangs_[other_ind])) {
+        if (cur.does_intersect(triangs_[other_ind])) {
           result.emplace_back(cur_ind);
           is_marked[other_ind] = true;
           is_inter = true;
@@ -71,11 +69,11 @@ class triangles_inters_solver_t {
   std::vector<std::size_t> solve_impl(
     opt_bvh_solution_tag
   ) {
-    BVH_t BVH_tree(this->triangs_);
+    BVH_t BVH_tree(triangs_);
     std::vector<std::size_t> result;
-    for (std::size_t cur_ind = 0; cur_ind < this->num_triangs_; ++cur_ind) {
+    for (std::size_t cur_ind = 0; cur_ind < num_triangs_; ++cur_ind) {
       if (BVH_tree.is_triangle_not_alone(
-          this->triangs_[cur_ind], cur_ind)) {
+          triangs_[cur_ind], cur_ind)) {
         result.emplace_back(cur_ind);
       }
     }

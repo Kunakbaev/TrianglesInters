@@ -48,7 +48,15 @@ class plane_t {
 
   // checks if plane is valid, i.e. not a segment and not a point
   [[nodiscard]] bool is_valid_plane() const { return !norm_.is_zero(); }
-  
+
+  [[nodiscard]] static bool is_valid_plane(
+    const point_t<T>& a,
+    const point_t<T>& b,
+    const point_t<T>& c
+  ) {
+    return !vec_ops::cross(b - a, c - a).is_zero();
+  }
+
   [[nodiscard]] point_t<T> get_point_on_plane() const { return base_; }
 
  private:

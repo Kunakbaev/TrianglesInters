@@ -5,18 +5,19 @@
 #include <memory>
 
 #include "logLib.hpp"
-#include "triangle.hpp"
+#include "triangle_with_box.hpp"
 
 template<typename T>
 class BVH_t {
  private:
   class node_t;
  public:
-  using triangs_list_t = std::vector<triangle_t<T>>;
+  using triangs_list_t = std::vector<triangle_with_box_t<T>>;
   using indices_list_t = std::vector<std::size_t>;
 
-  BVH_t(const triangs_list_t& triangles)
-      : num_triangles_(triangles.size()), triangles_(triangles),
+  BVH_t(const std::vector<triangle_t<T>>& triangles)
+      : num_triangles_(triangles.size()),
+        triangles_(triangles.begin(), triangles.end()),
         visited_(num_triangles_) {
     indices_list_t indices(num_triangles_);
     std::iota(indices.begin(), indices.end(), 0);
@@ -24,8 +25,8 @@ class BVH_t {
   }
 
   [[nodiscard]] bool is_triangle_not_alone(
-    const triangle_t<T>& triangle,
-    std::size_t          triangle_ind
+    const triangle_with_box_t<T>& triangle,
+    std::size_t                   triangle_ind
   );
 
  private:
@@ -54,9 +55,9 @@ class BVH_t {
   );
 
   [[nodiscard]] bool is_triangle_not_alone_rec(
-    const node_t*        cur_node,
-    const triangle_t<T>& triangle,
-    std::size_t          triangle_ind
+    const node_t*                 cur_node,
+    const triangle_with_box_t<T>& triangle,
+    std::size_t                   triangle_ind
   );
 
  private:
@@ -134,7 +135,7 @@ template <typename T>
 
 template <typename T>
 [[nodiscard]] bool BVH_t<T>::is_triangle_not_alone(
-  const triangle_t<T>& triangle,
+  const triangle_with_box_t<T>& triangle,
   std::size_t          triangle_ind
 ) {
   if (visited_[triangle_ind]) {
@@ -150,12 +151,11 @@ template <typename T>
 
 template <typename T>
 [[nodiscard]] bool BVH_t<T>::is_triangle_not_alone_rec(
-  const node_t*        cur_node,
-  const triangle_t<T>& triangle,
-  std::size_t          triangle_ind
+  const node_t*                 cur_node,
+  const triangle_with_box_t<T>& triangle,
+  std::size_t                   triangle_ind
 ) {
-  if (!cur_node->box.does_inter(triangle.get_AABB())
-  ) {
+  if (!cur_node->box.does_inter(triangle.get_AABB())) {
     return false;
   }
 
