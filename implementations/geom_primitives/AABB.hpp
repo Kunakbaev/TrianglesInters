@@ -37,15 +37,10 @@ AABB_t<T>::AABB_t(const triangle_t<T>& triangle) {
   std::array<point_t<T>, 3> points = triangle.get_points();
   corner_min_ = corner_max_ = points.front();
 
-  // std::cerr << "bruh tire : " << triangle << std::endl;
-  // for (auto& it : points) std::cerr << it << ", ";
-  // std::cerr << std::endl;
   for (std::size_t i = 1; i < points.size(); ++i) {
     corner_min_ = vec_ops::get_min_of_2_points(corner_min_, points[i]);
     corner_max_ = vec_ops::get_max_of_2_points(corner_max_, points[i]);
-    // std::cout << "corner min : " << corner_min_ << " max : " << corner_max_<< std::endl;
   }
-  //exit(2);
 }
 
 template <typename T>
@@ -106,14 +101,11 @@ template <typename T>
   T len_z = corner_max_.z - corner_min_.z;
 
   T volume = 2 * (len_x * len_y + len_x * len_z + len_y * len_z);
-  // std::cerr << "volume : " << volume << " lenx : " <<
-  // len_x << " leny : " << len_y << " lenz : " << len_z << "\n";
   return volume;
 }
 
 template <typename T>
 [[nodiscard]] bool AABB_t<T>::is_point_inside(const point_t<T>& point) const {
-  // TODO: BRUH:
   return does_inter({point, point});
 }
 

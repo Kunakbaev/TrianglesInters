@@ -2,27 +2,17 @@
 
 #include <algorithm>
 #include <numeric>
+#include <memory>
 
 #include "logLib.hpp"
 #include "triangle.hpp"
-
-std::size_t bruh = 0;
 
 template<typename T>
 class BVH_t {
  private:
   class node_t;
  public:
-  // struct triang_with_ind_t {
-  //   triangle_t<T> triang;
-  //   std::size_t   ind;
-  //   triang_with_ind_t() = default;
-  //   triang_with_ind_t(const triangle_t<T>& triang_, std::size_t ind_)
-  //       : triang(triang_), ind(ind_) {}
-  // };
-
   using triangs_list_t = std::vector<triangle_t<T>>;
-  // using triangs_with_ind_list_t = std::vector<triang_with_ind_t>;
   using indices_list_t = std::vector<std::size_t>;
 
   BVH_t(const triangs_list_t& triangles)
@@ -58,7 +48,7 @@ class BVH_t {
     indices_list_t&       rhs
   );
 
-  [[nodiscard]] node_t* construct_BVH_tree(
+  [[nodiscard]] std::unique_ptr<node_t> construct_BVH_tree(
     const indices_list_t& indices,
     std::size_t           depth
   );
@@ -71,36 +61,44 @@ class BVH_t {
 
  private:
   class node_t {
-   public:
-    node_t*        left    = nullptr;
-    node_t*        right   = nullptr;
-    AABB_t<T>      box     = {};
-    bool           is_leaf = false;
-    indices_list_t indices = {}; // ASK: this field is only needed in leaves,
-                                 // half the time we store redundant
+   private:
+    std::unique_ptr<node_t>         left_    = nullptr;
+    std::unique_ptr<node_t>         right_   = nullptr;
+    std::unique_ptr<indices_list_t> indices_ = {};
 
-    // constructor for leaf
-    node_t(const AABB_t<T>& box_,
-           const indices_list_t& indices_)
-        : is_leaf(true), box(box_), indices(indices_) {}
+   public:
+    AABB_t<T> box     = {};
+    bool      is_leaf = false;
+
     // constructor for NON leaf node
-    node_t(const AABB_t<T>& box_,
-           node_t* left_, node_t* right_)
-        : box(box_), left(left_), right(right_) {}
+    node_t(const AABB_t<T>& box_, std::unique_ptr<node_t> left,
+           std::unique_ptr<node_t> right)
+        : box(box_), left_(std::move(left)), right_(std::move(right)) {}
+    // constructor for leaf node
+    node_t(const AABB_t<T>& box, indices_list_t indices)
+        : is_leaf(true), box(box),
+          indices_(std::make_unique<indices_list_t>(std::move(indices))) {}
+
+    const node_t*  left() const { return left_.get(); }
+    const node_t* right() const { return right_.get(); }
+    const indices_list_t& get_indices() const { return *indices_; }
   };
+
+ private:
+  const node_t* get_root() const { return root_.get(); }
 
  private:
   static const std::size_t kLeafNumOfTriangles = 8;
 
  private:
-  const std::size_t    num_triangles_;
-  const triangs_list_t triangles_;
-  node_t*              root_ = nullptr;
-  std::vector<int>     visited_;
+  const std::size_t       num_triangles_;
+  const triangs_list_t    triangles_;
+  std::unique_ptr<node_t> root_ = nullptr;
+  std::vector<int>        visited_;
 };
 
 template <typename T>
-[[nodiscard]] typename BVH_t<T>::node_t* BVH_t<T>::construct_BVH_tree(
+[[nodiscard]] typename std::unique_ptr<typename BVH_t<T>::node_t> BVH_t<T>::construct_BVH_tree(
   const indices_list_t& indices, std::size_t depth
 ) {
   AABB_t box = find_bounding_box4triangs(indices);
@@ -111,43 +109,26 @@ template <typename T>
   if (!is_leaf) {
     partition_triangles(box, indices, lhs, rhs);
 
-    // // TODO: redundant aabb search
+    // TODO: redundant aabb search
     AABB_t left_box  = find_bounding_box4triangs(lhs);
     AABB_t right_box = find_bounding_box4triangs(rhs);
     T inter_volume = left_box.get_intersection(right_box).get_volume();
-    // std::cerr << "inter_volume : " << inter_volume << " bound : "
-    //   << static_cast<U>(0.3) * box.get_volume() << std::endl;
     if ((lhs.empty() || rhs.empty()) ||
       (depth >= 8  && inter_volume > static_cast<T>(0.3) * box.get_volume()) ||
       (depth >= 12 && inter_volume > static_cast<T>(0.1) * box.get_volume()) ||
        depth >= 14) {
-      // std::cout << "leaf size: " << indices.size() << "\n";
       is_leaf = true;
     }
-
-    // std::size_t mi = lhs.size();
-    // std::size_t ma = rhs.size();
-    // if (mi > ma) std::swap(mi, ma);
-    // double ratio = (double)ma / (double)mi;
-    // if (ratio > 1.1) {
-    //   is_leaf = true;
-    // }
-    // std::cout << (double)std::abs(static_cast<int>(lhs.size()) -
-    //                       static_cast<int>(rhs.size())) / triangles.size() << "\n";
   }
 
   if (is_leaf) {
-    node_t* cur_node = new node_t(box, indices);
-    // if (triangles.size() > 5) {
-    //   std::cout << "leaf size : " << triangles.size() << std::endl;
-    // }
+    auto cur_node = std::make_unique<node_t>(box, std::move(indices));
     return cur_node;
   }
 
-  // std::cout << "success partition" << std::endl;
-  node_t* left  = construct_BVH_tree(lhs, depth + 1);
-  node_t* right = construct_BVH_tree(rhs, depth + 1);
-  node_t* cur_node = new node_t(box, left, right);
+  std::unique_ptr<node_t> left  = construct_BVH_tree(lhs, depth + 1);
+  std::unique_ptr<node_t> right = construct_BVH_tree(rhs, depth + 1);
+  auto cur_node = std::make_unique<node_t>(box, std::move(left), std::move(right));
   return cur_node;
 }
 
@@ -160,11 +141,9 @@ template <typename T>
     return true;
   }
 
-  bruh = 0;
   bool is_not_alone = is_triangle_not_alone_rec(
-    root_, triangle, triangle_ind
+    get_root(), triangle, triangle_ind
   );
-  //std::cout << "bruh : " << bruh << "\n";
 
   return is_not_alone;
 }
@@ -175,15 +154,13 @@ template <typename T>
   const triangle_t<T>& triangle,
   std::size_t          triangle_ind
 ) {
-  // ++bruh;
-  if (cur_node == nullptr ||
-     !cur_node->box.does_inter(triangle.get_AABB())
+  if (!cur_node->box.does_inter(triangle.get_AABB())
   ) {
     return false;
   }
 
   if (cur_node->is_leaf) {
-    for (auto& ind : cur_node->indices) {
+    for (auto& ind : cur_node->get_indices()) {
       if (!triangles_[ind].get_AABB().does_inter(triangle.get_AABB())) {
         continue;
       }
@@ -199,9 +176,9 @@ template <typename T>
     return false;
   }
 
-  bool is_inter = is_triangle_not_alone_rec(cur_node->left, triangle, triangle_ind);
+  bool is_inter = is_triangle_not_alone_rec(cur_node->left(), triangle, triangle_ind);
   if (!is_inter) {
-    is_inter = is_triangle_not_alone_rec(cur_node->right, triangle, triangle_ind);
+    is_inter = is_triangle_not_alone_rec(cur_node->right(), triangle, triangle_ind);
   }
 
   return is_inter;
@@ -285,7 +262,6 @@ inline void BVH_t<U>::partition_triangles_by_ort_to_axis(
                    projection_pairs.end(),
                    cmp_proj_pairs);
   U partition_coord = projection_pairs[mid_ind].first;
-  // std::cerr << "partition coord : " << partition_coord << std::endl;
 
   lhs.clear();
   rhs.clear();

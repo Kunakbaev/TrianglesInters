@@ -52,8 +52,8 @@ class plane_t {
   [[nodiscard]] point_t<T> get_point_on_plane() const { return base_; }
 
  private:
-  point_t<T>   base_;          // any point on the plane
-  point_t<T>   norm_;          // if == 0, than plain is invalid -> segment or even point
+  point_t<T> base_; // any point on the plane
+  point_t<T> norm_; // if == 0, than plain is invalid -> segment or even point
 };
 
 template<typename U>

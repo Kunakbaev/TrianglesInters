@@ -59,9 +59,6 @@ triangle_t<T>::triangle_t(const point_t<T>& a, const point_t<T>& b, const point_
       is_triang_segm_(false), deg_case_segm_(a, b) {
 
   // constructing plane_ from points may result in exception
-  // (std::invalid_argument) as they may form degenerate plane (i.e. segment or point)
-  // std::cout << "triangle : " << *this << " min : " << bounding_box_.get_min_corner() <<
-  //      " " << bounding_box_.get_max_corner() << std::endl;
   try {
     plane_ = plane_t<T>(a_, b_, c_);
     is_triang_segm_ = false;
@@ -134,7 +131,6 @@ inline bool triangle_t<U>::is_intersected_by_segm(const segment_t<U>& segm) cons
   }
 
   auto [inter, is_inter] = plane_.intersect_by_segm(segm);
-  // std::cerr << "inter : " << inter << " is_inter : " << is_inter << std::endl;
   if (!is_inter) {
     return false;
   }

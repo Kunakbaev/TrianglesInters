@@ -79,18 +79,7 @@ template<typename U>
 template<typename U>
 [[nodiscard]] inline U point_t<U>::get_len() const {
   U len_sq = get_len_sq();
-  return sqrt(len_sq); // WARNING: is it overloaded? Won't there be any precision loss?
-  // if (std::is_same<T, float>::value) {
-  //   return sqrt(len);
-  // }
-  // if (std::is_same<T, double>::value) {
-  //   return sqrtl(len);
-  // }
-  // if (std::is_same<T, long double>::value) {
-  //   return sqrtl(len);
-  // }
-
-  // assert(false);
+  return sqrt(len_sq);
 }
 
 template<typename U>

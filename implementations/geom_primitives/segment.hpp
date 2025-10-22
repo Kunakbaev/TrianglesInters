@@ -77,17 +77,11 @@ template<typename U>
   }
 
   U dot_prod = vec_ops::dot(get_dir(), start2point);
-  // std::cerr << "dot_prod : " << dot_prod << " segm_len : " << get_dir().get_len_sq() << std::endl;
   if (utils::sign(dot_prod) == utils::signs_t::NEG) return false;
   if (utils::sign(dot_prod - get_dir().get_len_sq())
     == utils::signs_t::POS) return false;
 
   return true;
-
-  // TODO: cringe
-  // return does_lie_in_range(a_.x_, point.x_, b_.x_) &&
-  //        does_lie_in_range(a_.y_, point.y_, b_.y_) &&
-  //        does_lie_in_range(a_.z_, point.z_, b_.z_);
 }
 
 template<typename U>
@@ -103,7 +97,6 @@ template<typename U>
 template<typename U>
 [[nodiscard]] bool segment_t<U>::does_inter(const segment_t<U>& other) const {
   U mix = vec_ops::mixed_prod(get_dir(), other.get_dir(), other.get_start() - get_start());
-  // std::cout << "mix : " << mix << std::endl;
   if (utils::sign(mix) != utils::signs_t::ZERO) {
     return false;
   }
@@ -120,15 +113,12 @@ template<typename U>
   // a + t * (b - a) = c + s * (d - c);
   vector_t<U> v1 = get_dir();
   vector_t<U> v2 = other.get_dir();
-  // std::cerr << "my : " << *this << " other : " << other << std::endl;
-  // std::cerr << "v1 : " << v1 << " v2 : " << v2 << std::endl;
   vector_t<U> norm = vec_ops::cross(v1, v2);
   vector_t<U> starts_diff = get_start() - other.get_start();
   vector_t<U> cross_prod_numerator =
     vec_ops::cross(starts_diff, v2);
   U numerator = vec_ops::dot(cross_prod_numerator, norm);
   U denominator = norm.get_len_sq();
-  // std::cerr <<  "denominatro : " << denominator << std::endl;
   if (utils::sign(denominator) == utils::signs_t::ZERO) {
     // both segments lie on the same line
     // we already checked that case with check_endpoints_inters method
@@ -136,9 +126,7 @@ template<typename U>
   }
 
   U segm_time = -numerator / denominator;
-  // std::cerr << "segm_time : " << segm_time << std::endl;
   point_t<U> inter = get_start() + get_dir() * segm_time;
-  // std::cerr << "inter : " << inter << std::endl;
   return       does_contain_point(inter) &&
          other.does_contain_point(inter);
 }
