@@ -31,11 +31,11 @@ echo "LoggerLib submodule ready!"
 
 echo "Preparing cmake..."
 
-mkdir -p bin # no error if it exists
-cd bin
+mkdir -p build # no error if it exists
+cd build
 cmake ..
 cd ..
-cmake -S . -B bin -DCMAKE_BUILD_TYPE=Release
-cmake --build bin
-cmake --build bin --target show_help_msg
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+cmake --build build --target show_help_msg
 

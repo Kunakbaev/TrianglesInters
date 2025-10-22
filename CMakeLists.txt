@@ -13,8 +13,8 @@ add_library(my_project_includes INTERFACE)
 
 target_include_directories(my_project_includes INTERFACE
   ${CMAKE_SOURCE_DIR}/3dPartyModules/LoggerLib/include
-  ${CMAKE_SOURCE_DIR}/implementations/geom_primitives
-  ${CMAKE_SOURCE_DIR}/implementations
+  ${CMAKE_SOURCE_DIR}/include/geom_primitives
+  ${CMAKE_SOURCE_DIR}/include/
 )
 
 # ---------------------------------------------
@@ -30,7 +30,6 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_compile_options(-g -O0 -D_DEBUG)
   message(STATUS "Building in Debug mode")
 endif()
-
 
 # --------------------------------------------
 
@@ -64,16 +63,16 @@ usage examples:
     * bruteforce_solution_unit_test
     * AABB_unit_test 
     * optimized_BVH_solution_unit_test
-  * to set build type:       cmake -S . -B bin -DCMAKE_BUILD_TYPE=Debug
+  * to set build type:       cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
   * example of building and running usecase targets:
     1) naive solution
-    to build naive target: cmake --build bin --target naive
-    and to run it: ./bin/usecase/naive
+    to build naive target: cmake --build build --target naive
+    and to run it: ./build/usecase/naive
     2) optimized with BVH tree solution
-    to build: cmake --build bin --target optimized_BVH_solution
-    to run it: ./bin/usecase/optimized_BVH_solution
-  * to run triangles_tests: ./bin/unit_tests/triangle/triangle_unit_test
-  * to run all tests (uses CTest): make -C ./bin/unit_tests/ run_all_tests
+    to build: cmake --build build --target optimized_BVH_solution
+    to run it: ./build/usecase/optimized_BVH_solution
+  * to run triangles_tests: ./build/unit_tests/triangle/triangle_unit_test
+  * to run all tests (uses CTest): make -C ./build/unit_tests/ run_all_tests
 ")
 
 add_custom_target(show_help_msg
