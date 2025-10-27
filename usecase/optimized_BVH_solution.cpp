@@ -6,7 +6,10 @@
 
 int main() {
   triangles_inters_solver_t<double, opt_bvh_solution_tag> BVH_solution;
-  BVH_solution.input();
+  if (!BVH_solution.input()) {
+    return -1;
+  }
+
   std::vector<std::size_t> indices =
     BVH_solution.get_inter_triangs_indices();
 

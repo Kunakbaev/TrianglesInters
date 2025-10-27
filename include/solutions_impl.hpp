@@ -1,5 +1,8 @@
 #pragma once
 
+#include <limits>
+#include <string_view>
+
 #include "triangle.hpp"
 #include "BVH.hpp"
 
@@ -21,12 +24,29 @@ class triangles_inters_solver_t {
     return solve_impl(solution_tag{});
   }
 
-  void input() {
-    std::cin >> num_triangs_;
+  // true - on successful input
+  // false - smth went wrong
+  bool input() {
+    if (!read_till_success<std::size_t>(
+      num_triangs_, kNumTriangsInputErrMsg
+    )) {
+      return false;
+    }
+
+    if (num_triangs_ > kMaxNumTriangles) {
+      std::cerr << kNumTrianglesTooBig << std::endl;
+      std::cerr << "It must not exceed " << kMaxNumTriangles << std::endl;
+      return false;
+    }
+
     triangs_.resize(num_triangs_);
     for (auto& triangle : triangs_) {
-      std::cin >> triangle;
+      if (!read_till_success<triangle_t<T>>(triangle, kTriangleInputErrMsg)) {
+        return false;
+      }
     }
+
+    return true;
   }
 
   // prevent from copying and assigning
@@ -34,6 +54,27 @@ class triangles_inters_solver_t {
   triangles_inters_solver_t& operator=(const triangles_inters_solver_t& other) = delete;
 
  private:
+  // true - on successful input
+  // false - smth went wrong (EOF occurred unexpectedly)
+  template <typename ObjType>
+  [[nodiscard]] bool read_till_success(
+    ObjType&                object,
+    const std::string_view& input_fail_msg
+  ) {
+    while (!(std::cin >> object)) {
+      if (std::cin.eof()) {
+        std::cerr << kUnexpectedEndOfInput << std::endl;
+        return false;
+      }
+
+      std::cerr << input_fail_msg << std::endl;
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+
+    return true;
+  }
+
   // naive solution
   std::vector<std::size_t> solve_impl(
     naive_solution_tag
@@ -80,6 +121,14 @@ class triangles_inters_solver_t {
 
     return result;
   }
+
+ private:
+  static constexpr std::string_view kNumTriangsInputErrMsg = "Input error, please provide correct natural number";
+  static constexpr std::string_view kTriangleInputErrMsg   = "Input error, please provide correct triangle";
+  static constexpr std::string_view kUnexpectedEndOfInput  = "Error: unexpected end of input";
+  static constexpr std::string_view kNumTrianglesTooBig    = "Error: number of triangles is too big";
+
+  static constexpr std::size_t kMaxNumTriangles = 2'000'000;
 
  private:
   std::size_t num_triangs_;

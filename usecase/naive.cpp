@@ -6,7 +6,10 @@
 
 int main() {
   triangles_inters_solver_t<double, naive_solution_tag> brute_force_sol;
-  brute_force_sol.input();
+  if (!brute_force_sol.input()) {
+    return -1;
+  }
+
   std::vector<std::size_t> indices =
     brute_force_sol.get_inter_triangs_indices();
 
