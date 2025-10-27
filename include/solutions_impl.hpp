@@ -24,12 +24,10 @@ class triangles_inters_solver_t {
     return solve_impl(solution_tag{});
   }
 
-  // true - on successful input
+  // true  - on successful input
   // false - smth went wrong
   bool input() {
-    if (!read_till_success<std::size_t>(
-      num_triangs_, kNumTriangsInputErrMsg
-    )) {
+    if (!try_to_read_obj<std::size_t>(num_triangs_, kNumTriangsInputErrMsg)) {
       return false;
     }
 
@@ -40,10 +38,13 @@ class triangles_inters_solver_t {
     }
 
     triangs_.resize(num_triangs_);
+    std::size_t triangle_ind = 1;
     for (auto& triangle : triangs_) {
-      if (!read_till_success<triangle_t<T>>(triangle, kTriangleInputErrMsg)) {
+      if (!try_to_read_obj<triangle_t<T>>(triangle, kTriangleInputErrMsg)) {
+        std::cerr << "Error happened while reading triangle with index : " << triangle_ind << std::endl;
         return false;
       }
+      ++triangle_ind;
     }
 
     return true;
@@ -54,25 +55,24 @@ class triangles_inters_solver_t {
   triangles_inters_solver_t& operator=(const triangles_inters_solver_t& other) = delete;
 
  private:
-  // true - on successful input
+  // true  - on successful input
   // false - smth went wrong (EOF occurred unexpectedly)
   template <typename ObjType>
-  [[nodiscard]] bool read_till_success(
+  [[nodiscard]] bool try_to_read_obj(
     ObjType&                object,
     const std::string_view& input_fail_msg
   ) {
-    while (!(std::cin >> object)) {
-      if (std::cin.eof()) {
-        std::cerr << kUnexpectedEndOfInput << std::endl;
-        return false;
-      }
-
-      std::cerr << input_fail_msg << std::endl;
-      std::cin.clear();
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if (std::cin >> object) {
+      return true;
     }
 
-    return true;
+    if (std::cin.eof()) {
+      std::cerr << kUnexpectedEndOfInput << std::endl;
+      return false;
+    }
+
+    std::cerr << input_fail_msg << std::endl;
+    return false;
   }
 
   // naive solution
@@ -123,7 +123,7 @@ class triangles_inters_solver_t {
   }
 
  private:
-  static constexpr std::string_view kNumTriangsInputErrMsg = "Input error, please provide correct natural number";
+  static constexpr std::string_view kNumTriangsInputErrMsg = "Input error, please provide correct number of triangles - natural number";
   static constexpr std::string_view kTriangleInputErrMsg   = "Input error, please provide correct triangle";
   static constexpr std::string_view kUnexpectedEndOfInput  = "Error: unexpected end of input";
   static constexpr std::string_view kNumTrianglesTooBig    = "Error: number of triangles is too big";
